@@ -16,7 +16,7 @@ public class Activator implements BundleActivator {
 		this.context = context;
 		context.registerService(EventHandler.class, 
 				new NodeReciver(), 
-				getHandlerServiceProperties("ru/smartsol/spectrum/rpi/nodescanner"));
+				getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
 		
 		System.out.println("Started nodeReciver service");
 	}
