@@ -66,36 +66,33 @@ public class NodeScanner implements Runnable {
 		List<Map<String, Object>> rooteTable = (List<Map<String, Object>>) response.get("routingTable");
 		
 		for(Map<String, Object> node : rooteTable){
-			String message = null;
+			String availability = null;
 			String ip = (String) node.get("ip");
 			long newLink = (Long) node.get("link");
 			if(dumptable.containsKey(ip)){
-				long oldLink = dumptable.get(ip);
-				if(oldLink != 0 && newLink == 0){
-//					System.out.println("Node " + ip + " is unaviable now");
-					message = "Node " + ip + " is unaviable now";
+				if(newLink != 0){
+					availability = "aviable";
 				}
-				else if(oldLink ==0 && newLink != 0){
-//					System.out.println("Node " + ip + " is aviable again");
-					message = "Node " + ip + " is aviable again";
-				}
-			}
-			else{
-//				System.out.println("New node finded: " + ip);
-				message = "New node finded: " + ip;
+				else availability = "unaviable";
 			}
 			dumptable.put(ip, newLink);
-			if(message != null){
-				getEventProperties(message);
-				eventAdmin.postEvent(new Event("ru/smartsol/spectrum/rpi/nodescanner", getEventProperties(message)));
-//				System.out.println("Posted message " + message);
+			if(availability != null){
+				getEventProperties(ip,availability);
+				eventAdmin.postEvent(new Event("ru/smartsol/spectrum/rpi/nodescanner", getEventProperties(availability)));
 			}
 		}	
 	}
 	
 	private Dictionary<String, Object> getEventProperties(String property1) {
 	    Dictionary<String, Object> result = new Hashtable<String, Object>();
-	    result.put("property1", property1);
+	    result.put("IPv6", property1);
+	    return result;
+	  }
+	
+	private Dictionary<String, Object> getEventProperties(String ... properties) {
+	    Dictionary<String, Object> result = new Hashtable<String, Object>();
+	    result.put("IPv6", properties[0]);
+	    result.put("Availability", properties[1]);
 	    return result;
 	  }
 }
