@@ -220,7 +220,7 @@
                         <Service-Component>OSGI-INF/NodeListComponent.xml</Service-Component>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
-<!--                         <Bundle-Activator>${project.artifactId}.Activator</Bundle-Activator> -->
+                        <Bundle-Activator>ru.smartsolutions.mesgi.ru.smartsolutions.mesgi.nodelist.Activator</Bundle-Activator>
                         <Export-Package>
                           	${project.artifactId}*;version=${project.version}                           
                         </Export-Package>

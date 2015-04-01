@@ -18,6 +18,7 @@ public class MainPage extends CustomComponent {
 		TextArea textArea = new TextArea();
 		textArea.setSizeFull();
 		textArea.setValue("Test text");
+		NodeHandler.setTextArea(textArea);
 		
 		mainLayout.addComponent(textArea);
 	}
