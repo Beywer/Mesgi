@@ -77,8 +77,7 @@ public class NodeScanner implements Runnable {
 			}
 			dumptable.put(ip, newLink);
 			if(availability != null){
-				getEventProperties(ip,availability);
-				eventAdmin.postEvent(new Event("ru/smartsolutions/mesgi/nodescanner", getEventProperties(availability)));
+				eventAdmin.postEvent(new Event("ru/smartsolutions/mesgi/nodescanner",getEventProperties(ip,availability)));
 			}
 		}	
 	}

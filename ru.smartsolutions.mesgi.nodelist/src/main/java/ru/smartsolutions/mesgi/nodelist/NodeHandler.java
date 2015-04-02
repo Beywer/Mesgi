@@ -6,11 +6,14 @@ import java.util.Map;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.VerticalLayout;
 
 public class NodeHandler implements EventHandler {
 
 	private static TextArea textArea;
+	private static VerticalLayout layout;
 	private Map<String, String> nodes;
 	
 	public NodeHandler() {
@@ -24,13 +27,20 @@ public class NodeHandler implements EventHandler {
 		System.out.println("Setting area  " + NodeHandler.textArea);
 	}
 	
+	public static void setLayout(VerticalLayout layout){
+		NodeHandler.layout = layout;
+	}
+	
 	@Override
 	public void handleEvent(Event event) {
 		String ip = (String) event.getProperty("IPv6");
 		String avilability = (String) event.getProperty("Avilability");
 		nodes.put(ip, avilability);
-		if(textArea != null)
+		layout.addComponent(new Label(ip +  " " + avilability));
+		if(textArea != null){
+			System.out.println("not null  " + NodeHandler.textArea + "  " + layout.getComponentCount());
 			textArea.setValue(nodes.toString());
+		}
 	}
 
 }
