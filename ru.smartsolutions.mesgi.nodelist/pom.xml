@@ -38,6 +38,21 @@
 		</repository>
 	</repositories>
 
+     <distributionManagement>
+  		<repository>
+     		<id>SmartSolutions</id>
+     		<name>Smart Solutions</name>
+     		<url>http://10.10.0.66:8081/nexus/content/repositories/releases/</url>
+     		<uniqueVersion>false</uniqueVersion>
+ 	 	</repository>
+  		<snapshotRepository>
+     		<id>SmartSolutions</id>
+     		<name>Smart Solutions</name>
+     		<url>http://10.10.0.66:8081/nexus/content/repositories/snapshots/</url>
+     		<uniqueVersion>false</uniqueVersion>
+  		</snapshotRepository>
+	</distributionManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -220,7 +235,7 @@
                         <Service-Component>OSGI-INF/NodeListComponent.xml</Service-Component>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
-                        <Bundle-Activator>ru.smartsolutions.mesgi.ru.smartsolutions.mesgi.nodelist.Activator</Bundle-Activator>
+                        <Bundle-Activator>${project.artifactId}.Activator</Bundle-Activator>
                         <Export-Package>
                           	${project.artifactId}*;version=${project.version}                           
                         </Export-Package>

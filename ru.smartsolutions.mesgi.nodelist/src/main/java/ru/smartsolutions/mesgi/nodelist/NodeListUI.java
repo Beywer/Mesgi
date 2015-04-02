@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.ru.smartsolutions.mesgi.nodelist;
+package ru.smartsolutions.mesgi.nodelist;
 
 import javax.servlet.annotation.WebServlet;
 

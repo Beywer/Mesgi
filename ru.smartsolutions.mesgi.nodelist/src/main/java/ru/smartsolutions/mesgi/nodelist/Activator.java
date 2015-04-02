@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.ru.smartsolutions.mesgi.nodelist;
+package ru.smartsolutions.mesgi.nodelist;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -18,7 +18,7 @@ public class Activator implements BundleActivator {
 		context.registerService(EventHandler.class, 
 				new NodeHandler(), 
 				getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
-		
+		System.out.println("Created handler  ");
 	}
 
 	@Override

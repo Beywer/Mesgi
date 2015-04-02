@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.ru.smartsolutions.mesgi.nodelist;
+package ru.smartsolutions.mesgi.nodelist;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +15,13 @@ public class NodeHandler implements EventHandler {
 	
 	public NodeHandler() {
 		nodes = new HashMap<String, String>();
+		textArea = null;
+		System.out.println("Constr  " + NodeHandler.textArea);
 	}	
 	
 	public static void setTextArea(TextArea textArea){
 		NodeHandler.textArea = textArea;
+		System.out.println("Setting area  " + NodeHandler.textArea);
 	}
 	
 	@Override
@@ -26,7 +29,8 @@ public class NodeHandler implements EventHandler {
 		String ip = (String) event.getProperty("IPv6");
 		String avilability = (String) event.getProperty("Avilability");
 		nodes.put(ip, avilability);
-		textArea.setValue(nodes.toString());
+		if(textArea != null)
+			textArea.setValue(nodes.toString());
 	}
 
 }
