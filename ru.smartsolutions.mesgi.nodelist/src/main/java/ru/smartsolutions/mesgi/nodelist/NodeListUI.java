@@ -22,7 +22,8 @@ public class NodeListUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-    	setContent(new MainPage());
+    	Activator.mainPage.setUi(this);
+    	setContent(Activator.mainPage);
     }
 
     @WebServlet(urlPatterns = "/*", name = "NodeListUIServlet", asyncSupported = true)

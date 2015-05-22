@@ -2,29 +2,33 @@ package ru.beywer.vaadin.ru.beywer.vaadin.consoleecho;
 
 import java.io.PrintStream;
 
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.VerticalLayout;
 public class PrintStreamCapturer extends PrintStream {
 
-    private TextArea text;
+//    private VerticalLayout verticalLayout;
+	private Panel verticalLayout;
     private boolean atLineStart;
     private String indent;
 
-    public PrintStreamCapturer(TextArea textArea, PrintStream capturedStream, String indent) {
+    public PrintStreamCapturer(Panel verticalLayout, PrintStream capturedStream, String indent) {
         super(capturedStream);
-        this.text = textArea;
+        this.verticalLayout = verticalLayout;
         this.indent = indent;
         this.atLineStart = true;
     }
 
-    public PrintStreamCapturer(TextArea textArea, PrintStream capturedStream) {
+    public PrintStreamCapturer(Panel textArea, PrintStream capturedStream) {
         this(textArea, capturedStream, "");
     }
 
     private void writeToTextArea(String str) {
-        if (text != null) {
-            synchronized (text) {
-            	String oldValue = text.getValue();
-                text.setValue(oldValue + str);
+        if (verticalLayout != null) {
+            synchronized (verticalLayout) {
+            	verticalLayout.setContent(new Label(str));
+//            	verticalLayout.addComponent(new Label(str));
             }
         }
     }

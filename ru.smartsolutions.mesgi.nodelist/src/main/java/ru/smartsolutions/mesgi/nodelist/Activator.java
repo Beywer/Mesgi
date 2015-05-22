@@ -11,12 +11,14 @@ import org.osgi.service.event.EventHandler;
 public class Activator implements BundleActivator {
 
 	private BundleContext context;
+	public static MainPage mainPage;
 	
 	@Override
 	public void start(BundleContext context) throws Exception {
 		this.context = context;
+		mainPage = new MainPage();
 		context.registerService(EventHandler.class, 
-				new NodeHandler(), 
+				mainPage, 
 				getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
 		System.out.println("Created handler  ");
 	}

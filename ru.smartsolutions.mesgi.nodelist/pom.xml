@@ -76,6 +76,11 @@
 			<version>${vaadin.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+		    <groupId>com.vaadin</groupId>
+		    <artifactId>vaadin-push</artifactId>
+		    <version>${vaadin.version}</version>
+		</dependency>
 		<!--
 		  Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory).
 		  
