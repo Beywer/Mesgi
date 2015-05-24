@@ -1,7 +1,5 @@
 package ru.smartsolutions.mesgi;
 
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.Dictionary;
@@ -18,30 +16,16 @@ public class Activator implements BundleActivator {
 	
 	public void start(BundleContext context) {
 
-		switchPlatformEncodingToUTF8();
+//		switchPlatformEncodingToUTF8();
 		
 		this.context = context;
 		context.registerService(EventHandler.class, 
-				new NodeReciver(), 
-				getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
-		
-//		try {
-//			PrintStream stream = new PrintStream(System.out, false, "UTF-8");
-//			stream.println("ФЫВА");
-//			System.setOut(stream);
-//		} catch (UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//		}
-		
+		new NodeReciver(), 
+		getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
 		
 		System.out.println("Started nodeReciver service");
-
-		System.out.println("���� ���� ����");
-		System.out.println("утф восемь");
 	}
 
-	
-	
 	public void stop(BundleContext context) throws Exception {
 		this.context = null;
 		System.out.println("Stoped nodeReciver service");
