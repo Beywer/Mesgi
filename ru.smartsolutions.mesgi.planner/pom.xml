@@ -38,20 +38,20 @@
 		</repository>
 	</repositories>
 
-<!--      <distributionManagement> -->
-<!--   		<repository> -->
-<!--      		<id>SmartSolutions</id> -->
-<!--      		<name>Smart Solutions</name> -->
-<!--      		<url>http://10.10.0.66:8081/nexus/content/repositories/releases/</url> -->
-<!--      		<uniqueVersion>false</uniqueVersion> -->
-<!--  	 	</repository> -->
-<!--   		<snapshotRepository> -->
-<!--      		<id>SmartSolutions</id> -->
-<!--      		<name>Smart Solutions</name> -->
-<!--      		<url>http://10.10.0.66:8081/nexus/content/repositories/snapshots/</url> -->
-<!--      		<uniqueVersion>false</uniqueVersion> -->
-<!--   		</snapshotRepository> -->
-<!-- 	</distributionManagement> -->
+     <distributionManagement>
+  		<repository>
+     		<id>SmartSolutions</id>
+     		<name>Smart Solutions</name>
+     		<url>http://10.10.0.66:8081/nexus/content/repositories/releases/</url>
+     		<uniqueVersion>false</uniqueVersion>
+ 	 	</repository>
+  		<snapshotRepository>
+     		<id>SmartSolutions</id>
+     		<name>Smart Solutions</name>
+     		<url>http://10.10.0.66:8081/nexus/content/repositories/snapshots/</url>
+     		<uniqueVersion>false</uniqueVersion>
+  		</snapshotRepository>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -227,13 +227,13 @@
                             <goal>manifest</goal>
                         </goals>
                     </execution>
-                    <execution>
-						<id>bundle-install</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install</goal>
-						</goals>
-					</execution>
+<!--                     <execution> -->
+<!-- 						<id>bundle-install</id> -->
+<!-- 						<phase>install</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>install</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
                 </executions>
                 <configuration>
                 	<supportedProjectTypes>

@@ -33,4 +33,14 @@
   @include valo;
 
   // Insert your own theme rules here
+  
+ 
+.v-tree-node-caption-text-red {
+	color: #d20000;
+}
+
+.v-tree-node-caption-text-green {
+	color: #00dd00;
+}
+  
 }

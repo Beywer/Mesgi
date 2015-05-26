@@ -6,6 +6,8 @@ import java.util.Map;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+import ru.smartsolutions.mesgi.planner.model.Device;
+
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
@@ -24,37 +26,44 @@ public class NodeReciver implements EventHandler {
 		//Если узел еще не был в сети
 		if(!nodes.containsKey(ip)){ 
 			nodes.put(ip, availability);
-			System.out.println("Planner: " + ip + " " + availability);
-			changeDeviceAvailability(ip, availability);
+			System.out.println("Planner: recieved new device " + ip + " " + availability);
+			addDeviceAvailability(ip, availability);
 			
 		} else {
 			String oldAvailability = nodes.get(ip);
 			//Если у уже известного узла именилась доступность
 			if(!oldAvailability.equals(availability)){
 				nodes.put(ip, availability);
-				System.out.println("Planner: " + ip + " " + availability);
-				changeDeviceAvailability(ip, availability);
+				System.out.println("Planner: recieved changed state" + ip + " " + availability);
+//				addDeviceAvailability(ip, availability);
 			}
 		}
 	}
 	
-	private void changeDeviceAvailability(final String ip, final String availability){
+	private void changedDeviceAvailability(final String ip, final String availability){
+		ui.access(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+			}
+		});
+	}
+	
+	private void addDeviceAvailability(final String ip, final String availability){
 		ui.access(new Runnable() {
 			
 			@Override
 			public void run() {
 				
 				Object ipKey = deviceContainer.addItem();
-				deviceTree.setItemCaption(ipKey, ip);
+				deviceContainer.getContainerProperty(ipKey, "name").setValue(ip);
+				deviceContainer.getContainerProperty(ipKey, "availability").setValue(availability);
+				deviceContainer.setChildrenAllowed(ipKey, false);
 				
-				Object availabilityKey = deviceContainer.addItem();
-				deviceTree.setItemCaption(availabilityKey, availability);
+//				ui.push();
 				
-				deviceTree.setParent(availabilityKey, ipKey);
-				
-				ui.push();
-				
-				System.out.println("Planner: pushed changes");
+				System.out.println("\tPlanner: pushed changes");
 			}
 		});
 	}

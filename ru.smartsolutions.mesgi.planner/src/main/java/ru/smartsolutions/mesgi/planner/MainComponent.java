@@ -5,14 +5,14 @@ import java.util.Hashtable;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventConstants;
-import org.osgi.service.event.EventHandler;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
-import ru.smartsolutions.mesgi.planner.model.Device;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.Tree.ItemStyleGenerator;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -40,15 +40,15 @@ public class MainComponent extends HorizontalLayout {
 
 		buildInterface();
 
-		if(context == null){
-			context = Activator.getContext();
-			nodeReciver = new NodeReciver(ui, deviceTree, deviceContainer);
-			
-			context.registerService(EventHandler.class, 
-			nodeReciver, 
-			getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
-			System.out.println("Crated eventHandler in component");
-		}
+//		if(context == null){
+//			context = Activator.getContext();
+//			nodeReciver = new NodeReciver(ui, deviceTree, deviceContainer);
+//			
+//			context.registerService(EventHandler.class, 
+//			nodeReciver, 
+//			getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
+//			System.out.println("Crated eventHandler in component");
+//		}
 	}
 
 	private Dictionary<String, Object> getHandlerServiceProperties(String... topics) {
@@ -60,11 +60,35 @@ public class MainComponent extends HorizontalLayout {
 	private void buildInterface(){
 
 		deviceTree = new Tree("Устройства");
-		deviceContainer = new HierarchicalContainer();
-		deviceTree.setContainerDataSource(deviceContainer);
+		deviceTree.setItemCaptionPropertyId("name");
+
+		ItemStyleGenerator styleGenerator = new ItemStyleGenerator() {
+			
+			@Override
+			public String getStyle(Tree source, Object itemId) {
+				
+				Property<String> availability = source.getContainerProperty(itemId, "availability");
+				Property<String> name = source.getContainerProperty(itemId, "availability");
+				
+				System.out.println("planner: availability " + availability.getValue());
+				System.out.println("planner: name " + availability.getValue());
+				
+				if(availability.getValue().equals("available")){
+					System.out.println("\tplanner: color green");
+					return "text-green";
+				} else {
+					System.out.println("\tplanner: color red");
+					return "text-red";
+				}
+			}
+		};
+		deviceTree.setItemStyleGenerator(styleGenerator);
 		
-		System.out.println("Planner :" + deviceTree);
-		System.out.println("Planner :" + deviceContainer);
+		deviceContainer = new HierarchicalContainer();
+		deviceContainer.addContainerProperty("name", String.class, "undefinded");
+		deviceContainer.addContainerProperty("availability", String.class, "undefinded");
+		
+		deviceTree.setContainerDataSource(deviceContainer);
 		
 		taskTree = new Tree("Задачи");
 		taskContainer = new HierarchicalContainer();
@@ -73,19 +97,70 @@ public class MainComponent extends HorizontalLayout {
         VTimeLine timeLine = new VTimeLine();
         timeLine.setSizeFull();
 
-//    	List<Map<String,String>> timeLineData = new ArrayList<>();
-//    	timeLineData.add(VTimeLine.createRow(new Date().getTime(),
-//    			new Date().getTime() + 1000000, "Task 0", "Device 0"));
-//        
-//        timeLine.setDatatable(timeLineData);
-//        timeLine.setCurrentInterval(new Date().getTime() - 1000, new Date().getTime() + 1000000);
-        
 		this.addComponent(deviceTree);
 	    this.addComponent(timeLine);
 		this.addComponent(taskTree);
 		
-		this.setExpandRatio(deviceTree, 1);
+		this.setExpandRatio(deviceTree, 2);
 		this.setExpandRatio(timeLine, 3);
 		this.setExpandRatio(taskTree, 1);
+		
+		setTreeData();
+	}
+	
+	private void setTreeData(){
+		Object key = deviceContainer.addItem();
+		deviceContainer.getContainerProperty(key, "name").setValue("Device 1");
+		deviceContainer.getContainerProperty(key, "availability").setValue("available");
+		deviceContainer.setChildrenAllowed(key, false);
+		
+		key = deviceContainer.addItem();
+		deviceContainer.getContainerProperty(key, "name").setValue("Device 2");
+		deviceContainer.getContainerProperty(key, "availability").setValue("unavailable");
+		deviceContainer.setChildrenAllowed(key, false);
+		
+		key = deviceContainer.addItem();
+		deviceContainer.getContainerProperty(key, "name").setValue("Device 3");
+		deviceContainer.getContainerProperty(key, "availability").setValue("available");
+		deviceContainer.setChildrenAllowed(key, false);
+		
+		key = deviceContainer.addItem();
+		deviceContainer.getContainerProperty(key, "name").setValue("Device 4");
+		deviceContainer.getContainerProperty(key, "availability").setValue("unavailable");
+		deviceContainer.setChildrenAllowed(key, false);
+		
+		key = deviceContainer.addItem();
+		deviceContainer.getContainerProperty(key, "name").setValue("Device 5");
+		deviceContainer.getContainerProperty(key, "availability").setValue("available");
+		deviceContainer.setChildrenAllowed(key, false);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
