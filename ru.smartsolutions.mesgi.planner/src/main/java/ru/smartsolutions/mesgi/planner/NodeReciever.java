@@ -12,7 +12,7 @@ import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 
-public class NodeReciver implements EventHandler {
+public class NodeReciever implements EventHandler {
 
 	private Map<String, String> nodes;
 	private Map<String, Object> keys;
@@ -75,7 +75,7 @@ public class NodeReciver implements EventHandler {
 		});
 	}
 	
-	public NodeReciver(UI ui, Tree deviceTree,
+	public NodeReciever(UI ui, Tree deviceTree,
 			HierarchicalContainer deviceContainer) {
 
 		this.ui = ui;

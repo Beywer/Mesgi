@@ -1,7 +1,5 @@
 package ru.smartsolutions.mesgi.planner;
 
-import java.util.TimerTask;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -11,8 +9,7 @@ public class Activator implements BundleActivator {
 
 	private static BundleContext context;
 	private HttpService httpService;
-	private DeviceObserver deviceObserver;
-	
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		this.context = context;
@@ -26,13 +23,6 @@ public class Activator implements BundleActivator {
 		httpService.registerServlet("/*", servlet,
 				null,null);
 
-//		deviceObserver = new DeviceObserver();
-//		Component component  = servlet.getUI().getContent();
-//		if(component instanceof MainComponent){
-//			System.out.println("MainComponent");
-//			deviceObserver.addDeviceObservable((IDeviceObservable) component);
-//		}
-		
 		System.out.println("Planner started");
 	}
 
