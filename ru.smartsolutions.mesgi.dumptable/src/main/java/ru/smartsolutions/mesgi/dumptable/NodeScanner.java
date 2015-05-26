@@ -79,7 +79,7 @@ public class NodeScanner implements Runnable {
 			if(availability != null){
 				eventAdmin.postEvent(new Event("ru/smartsolutions/mesgi/nodescanner",getEventProperties(ip,availability)));
 			}
-			eventAdmin.postEvent(new Event("ru/smartsolutions/mesgi/nodescanner",getEventProperties("IP","true")));
+//			eventAdmin.postEvent(new Event("ru/smartsolutions/mesgi/nodescanner",getEventProperties("IP","true")));
 		}	
 	}
 	
