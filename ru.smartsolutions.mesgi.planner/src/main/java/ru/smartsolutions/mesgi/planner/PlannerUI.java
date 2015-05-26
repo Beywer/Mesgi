@@ -25,8 +25,8 @@ import com.vaadin.ui.VerticalLayout;
 @JavaScript ({ "1.js", "2.js"})
 @Theme("plannertheme")
 @Widgetset("ru.smartsolutions.mesgi.planner.PlannerWidgetset")
-//@Push(value=PushMode.MANUAL)
-@Push
+@Push(value=PushMode.MANUAL)
+//@Push
 public class PlannerUI extends UI {
 
 	private static UI ui;

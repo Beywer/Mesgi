@@ -15,12 +15,14 @@ import com.vaadin.ui.UI;
 public class NodeReciver implements EventHandler {
 
 	private Map<String, String> nodes;
+	private Map<String, Object> keys;
 	
 	private UI ui;
 	private Tree deviceTree;
 	private HierarchicalContainer deviceContainer;
 	
 	public void handleEvent(Event event) {
+		
 		String ip = (String) event.getProperty("IPv6");
 		String availability = (String) event.getProperty("Availability");
 		//Если узел еще не был в сети
@@ -45,7 +47,10 @@ public class NodeReciver implements EventHandler {
 			
 			@Override
 			public void run() {
+				Object key = keys.get(ip);
+				deviceContainer.getContainerProperty(key, "availability").setValue(availability);
 				
+				ui.push();
 			}
 		});
 	}
@@ -61,7 +66,9 @@ public class NodeReciver implements EventHandler {
 				deviceContainer.getContainerProperty(ipKey, "availability").setValue(availability);
 				deviceContainer.setChildrenAllowed(ipKey, false);
 				
-//				ui.push();
+				keys.put(ip, ipKey);
+				
+				ui.push();
 				
 				System.out.println("\tPlanner: pushed changes");
 			}
@@ -71,14 +78,11 @@ public class NodeReciver implements EventHandler {
 	public NodeReciver(UI ui, Tree deviceTree,
 			HierarchicalContainer deviceContainer) {
 
-		System.out.println("Planner : NodeRecieverConstrunctor");
 		this.ui = ui;
 		this.deviceTree = deviceTree;
 		this.deviceContainer = deviceContainer;
 
-		System.out.println("Planner :" + deviceTree);
-		System.out.println("Planner :" + deviceContainer);
-
 		nodes = new HashMap<String, String>();
+		keys = new HashMap<String, Object>();
 	}
 }

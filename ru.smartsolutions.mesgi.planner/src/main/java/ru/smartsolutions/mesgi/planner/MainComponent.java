@@ -1,10 +1,15 @@
 package ru.smartsolutions.mesgi.planner;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
 
@@ -33,6 +38,8 @@ public class MainComponent extends HorizontalLayout {
 	private BundleContext context;
 	private NodeReciver nodeReciver;
 	
+	private List<Object> keys;
+	
 	public MainComponent(UI ui) {
 		
 		this.ui = ui;
@@ -43,7 +50,7 @@ public class MainComponent extends HorizontalLayout {
 //		if(context == null){
 //			context = Activator.getContext();
 //			nodeReciver = new NodeReciver(ui, deviceTree, deviceContainer);
-//			
+//
 //			context.registerService(EventHandler.class, 
 //			nodeReciver, 
 //			getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
@@ -70,11 +77,8 @@ public class MainComponent extends HorizontalLayout {
 				Property<String> availability = source.getContainerProperty(itemId, "availability");
 				Property<String> name = source.getContainerProperty(itemId, "availability");
 				
-				System.out.println("planner: availability " + availability.getValue());
-				System.out.println("planner: name " + availability.getValue());
-				
 				if(availability.getValue().equals("available")){
-					System.out.println("\tplanner: color green");
+					System.out.println("\tplanner: "+name.getValue()+" color green");
 					return "text-green";
 				} else {
 					System.out.println("\tplanner: color red");
@@ -105,7 +109,40 @@ public class MainComponent extends HorizontalLayout {
 		this.setExpandRatio(timeLine, 3);
 		this.setExpandRatio(taskTree, 1);
 		
+		keys = new ArrayList<>();
 		setTreeData();
+		Timer timer = new Timer();
+		timer.schedule(new DeviceChangeTask(), 3000, 2000);
+		
+	}
+	
+	private class DeviceChangeTask extends TimerTask{
+
+		private int count = 0;
+		
+		@Override
+		public void run() {
+			if(count > 4) count = 0;
+			ui.access(new Runnable() {
+				
+				@Override
+				public void run() {
+					Property<String> prop = deviceContainer.getContainerProperty(keys.get(count), "availability");
+					
+					String value = prop.getValue(), newValue = "";
+					if(value.equals("available"))  newValue = "unavailable";
+					else newValue = "available";
+					
+					deviceContainer.getContainerProperty(keys.get(count), "availability").setValue(newValue);
+					
+					System.out.println("\tTimerTask: oldProp" + value + " newProp " + newValue );
+					
+//					ui.push();
+				}
+			});
+			count++;
+		}
+		
 	}
 	
 	private void setTreeData(){
@@ -113,26 +150,31 @@ public class MainComponent extends HorizontalLayout {
 		deviceContainer.getContainerProperty(key, "name").setValue("Device 1");
 		deviceContainer.getContainerProperty(key, "availability").setValue("available");
 		deviceContainer.setChildrenAllowed(key, false);
-		
+		keys.add(key);
+
 		key = deviceContainer.addItem();
 		deviceContainer.getContainerProperty(key, "name").setValue("Device 2");
 		deviceContainer.getContainerProperty(key, "availability").setValue("unavailable");
 		deviceContainer.setChildrenAllowed(key, false);
+		keys.add(key);
 		
 		key = deviceContainer.addItem();
 		deviceContainer.getContainerProperty(key, "name").setValue("Device 3");
 		deviceContainer.getContainerProperty(key, "availability").setValue("available");
 		deviceContainer.setChildrenAllowed(key, false);
+		keys.add(key);
 		
 		key = deviceContainer.addItem();
 		deviceContainer.getContainerProperty(key, "name").setValue("Device 4");
 		deviceContainer.getContainerProperty(key, "availability").setValue("unavailable");
 		deviceContainer.setChildrenAllowed(key, false);
+		keys.add(key);
 		
 		key = deviceContainer.addItem();
 		deviceContainer.getContainerProperty(key, "name").setValue("Device 5");
 		deviceContainer.getContainerProperty(key, "availability").setValue("available");
 		deviceContainer.setChildrenAllowed(key, false);
+		keys.add(key);
 	}
 }
 
