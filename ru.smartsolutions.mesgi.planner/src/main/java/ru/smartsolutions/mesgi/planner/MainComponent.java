@@ -1,28 +1,26 @@
 package ru.smartsolutions.mesgi.planner;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventConstants;
-import org.osgi.service.event.EventHandler;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
 import ru.smartsolutions.mesgi.planner.model.Device;
 
-import com.vaadin.data.Property;
 import com.vaadin.data.util.HierarchicalContainer;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.Tree.ItemStyleGenerator;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -30,25 +28,23 @@ public class MainComponent extends HorizontalLayout {
 
 	private static final long serialVersionUID = -7389175932554905939L;
 
-	private VerticalLayout verticalLayout;
-	
+
 //	Список устройств
-	private Tree deviceTree;
-	private HierarchicalContainer deviceContainer;
+	private VerticalLayout verticalLayout;
+	private Map<String, Device> devices;
+	private VerticalLayout deviceLayout;
+	//Описание устройств
+	private TextArea deviceDescription;
+	
 //	Список задач
 	private Tree taskTree;
 	private HierarchicalContainer taskContainer;
 	
+//	Базовые компоненты
 	private UI ui;
-	private BundleContext context;
-	private NodeReciever nodeReciver;
+	private BundleContext context; 
+	private NodeReciever nodeReciver; //eventadmin ЕventHandler
 	
-	private TextArea deviceDescription;
-	
-	private Timer timer;
-	
-	private List<Object> keys;
-	private Object key0;
 	
 	public MainComponent(UI ui) {
 		
@@ -76,59 +72,43 @@ public class MainComponent extends HorizontalLayout {
 	
 	private void buildInterface(){
 
-		deviceContainer = new HierarchicalContainer();
-		deviceContainer.addContainerProperty("name", String.class, "undefinded");
-		deviceContainer.addContainerProperty("device", Device.class, null);
+        //Layout для списка устройств и описания
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSizeFull();
+
+        //Список устройств
+        deviceLayout = new VerticalLayout();
+        deviceLayout.setSizeUndefined();
+		deviceLayout.setWidth(100, Unit.PERCENTAGE);
 		
-		deviceTree = new Tree("Устройства");
-		deviceTree.setItemCaptionPropertyId("name");
-		ItemStyleGenerator styleGenerator = new ItemStyleGenerator() {
-			
-			@Override
-			public String getStyle(Tree source, Object itemId) {
-				
-				Property<Device> prop = source.getContainerProperty(itemId, "device");
-				Device device = prop.getValue();
-				
-				if(device != null)
-					if(device.getAvailability()){
-//						System.out.println("\tplanner: "+device.getName()+"  will green");
-						return "text-green";
-					} else {
-//						System.out.println("\tplanner: "+device.getName()+" will red");
-						return "text-red";
-					}
-				else return "";
-			}
-		};
-		deviceTree.setItemStyleGenerator(styleGenerator);
-		deviceTree.setContainerDataSource(deviceContainer);
-		
-		taskTree = new Tree("Задачи");
-		taskContainer = new HierarchicalContainer();
-		taskTree.setContainerDataSource(taskContainer);
-		
+        devices = new HashMap<String, Device>();
+
+        Panel panel = new Panel(deviceLayout);
+        panel.setCaption("Устройства");
+        panel.setSizeFull();
+        
+        //Описание устройтсва
+        deviceDescription = new TextArea("Описание устройства");
+        deviceDescription.setSizeFull();
+        deviceDescription.setWordwrap(false);
+        
+        //Компоновка списка устройств и описания
+        verticalLayout.addComponent(panel);
+        verticalLayout.addComponent(deviceDescription);
+        verticalLayout.setExpandRatio(panel, 5);
+        verticalLayout.setExpandRatio(deviceDescription, 3);
+
+        //Таймлайн
         VTimeLine timeLine = new VTimeLine();
         timeLine.setSizeFull();
         timeLine.setStyleName("timeline-marg");
         
-        deviceDescription = new TextArea("Описание устройства");
-        deviceDescription.setSizeFull();
-        deviceDescription.setWordwrap(false);
-
-        VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setSizeFull();
-
-        Panel panel = new Panel(deviceTree);
-        panel.setCaption("Устройства");
-        panel.setSizeFull();
+        //Список задач
+		taskTree = new Tree("Задачи");
+		taskContainer = new HierarchicalContainer();
+		taskTree.setContainerDataSource(taskContainer);
         
-        verticalLayout.addComponent(panel);
-        verticalLayout.addComponent(deviceDescription);
-        
-        verticalLayout.setExpandRatio(panel, 5);
-        verticalLayout.setExpandRatio(deviceDescription, 3);
-        
+        //Компоновка всего интерфейса
 		this.addComponent(verticalLayout);
 	    this.addComponent(timeLine);
 		this.addComponent(taskTree);
@@ -137,55 +117,56 @@ public class MainComponent extends HorizontalLayout {
 		this.setExpandRatio(timeLine, 3);
 		this.setExpandRatio(taskTree, 1);
 		
-		deviceTree.addItemClickListener(new ItemClickListener() {
-			
-			@Override
-			public void itemClick(ItemClickEvent event) {
-				Property<Device> devicePropertty = event.getItem().getItemProperty("device");
-				Device device = devicePropertty.getValue();
-		        deviceDescription.setReadOnly(false);
-				deviceDescription.setValue("Ip : " + device.getAddress() + "\n\n"
-						+ device.getDescription());
-		        deviceDescription.setReadOnly(true);
-			}
-		});
-		
-		keys = new ArrayList<>();
-		setTreeData();
-		timer = new Timer();
+//		Работа с тестовыми данными
+		setTestData();
+		Timer timer = new Timer();
 		timer.schedule(new DeviceChangeTask(), 1000, 1000);
 	}
 	
 	private class DeviceChangeTask extends TimerTask{
 
-		private int count = 0;
+		private int count = 1;
 		private boolean avai = false;
 		
 		@Override
 		public void run() {
-			if(count > 4) count = 0;
 			ui.access(new Runnable() {
 				
 				@Override
 				public void run() {
-					Property<Device> prop = deviceContainer.getContainerProperty(keys.get(count), "device");
-					Device device = prop.getValue();
 					
-					if(device.getAvailability())  device.setAvailability(false);
-					else device.setAvailability(true);
+//					ДОБАВЛЕНИЕ ПУШЕМ
+//					final Device device = new Device("Device " + count, "Address " + count, true);
+//					device.setDescription("Description " +count);
+//					
+//					device.getButton().addClickListener(new ClickListener() {
+//						
+//						@Override
+//						public void buttonClick(ClickEvent event) {
+//							deviceDescription.setReadOnly(false);
+//							deviceDescription.setValue("Ip adress : " + device.getAddress() + 
+//											"\n\n" + device.getDescription());
+//							deviceDescription.setReadOnly(true);
+//						}
+//					});
+//					
+//					deviceLayout.addComponent(device.getButton());
 					
-					deviceContainer.getContainerProperty(keys.get(count), "device").setValue(device);
-					
-//					System.out.println("\tTimerTask: inverrt prop at device "  + (count + 1));
-					
-//					crutch
-					Object key = deviceContainer.addItem();
-					deviceContainer.getContainerProperty(key, "name").setValue("");
-					deviceContainer.setChildrenAllowed(key, false);
+//					ОБНОВЕЛЕНИЕ ПУШЕМ
+					if(count > 3) count = 1;
+					Device device =  devices.get("TestDevice " + count + " address");
+					device.setAvailability(!device.getAvailability());
 					
 					ui.push();
 					
-					deviceContainer.removeItem(key);
+//					crutch
+//					Object key = deviceContainer.addItem();
+//					deviceContainer.getContainerProperty(key, "name").setValue("");
+//					deviceContainer.setChildrenAllowed(key, false);
+//					
+//					ui.push();
+//					
+//					deviceContainer.removeItem(key);
 //					end of crutch
 				}
 			});
@@ -194,47 +175,43 @@ public class MainComponent extends HorizontalLayout {
 		
 	}
 	
-	private void setTreeData(){
-		Object key = deviceContainer.addItem();
-		Device device = new Device("SmartSputnik 1", "fe80:feef:ba27:ebff:fe4c:f09d", true);
-		device.setDescription("Description 1 \n Между прочим, это высокотехнологичное устройство"
-				+ ", которому не следует переходить дорогу.");
-		deviceContainer.getContainerProperty(key, "name").setValue(device.getName());
-		deviceContainer.getContainerProperty(key, "device").setValue(device);
-		deviceContainer.setChildrenAllowed(key, false);
-		keys.add(key);
-
-		key = deviceContainer.addItem();
-		device = new Device("Device 2", "Address 2", false);
-		device.setDescription("Description 2 \n New string");
-		deviceContainer.getContainerProperty(key, "name").setValue(device.getName());
-		deviceContainer.getContainerProperty(key, "device").setValue(device);
-		deviceContainer.setChildrenAllowed(key, false);
-		keys.add(key);
+	private void setTestData(){
 		
-		key = deviceContainer.addItem();
-		device = new Device("Device 3", "Address 3", true);
-		device.setDescription("Description 3 \n New string");
-		deviceContainer.getContainerProperty(key, "name").setValue(device.getName());
-		deviceContainer.getContainerProperty(key, "device").setValue(device);
-		deviceContainer.setChildrenAllowed(key, false);
-		keys.add(key);
+		Device device = new Device("TestDevice 1", "TestDevice 1 address", true);
+		device.setDescription("TestDevice 1 description");
+		Button button = device.getButton();
 		
-		key = deviceContainer.addItem();
-		device = new Device("Device 4", "Address 4", false);
-		device.setDescription("Description 4 \n New string");
-		deviceContainer.getContainerProperty(key, "name").setValue(device.getName());
-		deviceContainer.getContainerProperty(key, "device").setValue(device);
-		deviceContainer.setChildrenAllowed(key, false);
-		keys.add(key);
+		deviceLayout.addComponent(button);
+		devices.put(device.getAddress(), device);
 		
-		key = deviceContainer.addItem();
-		device = new Device("Device 5", "Address 5", true);
-		device.setDescription("Description 5 \n New string");
-		deviceContainer.getContainerProperty(key, "name").setValue(device.getName());
-		deviceContainer.getContainerProperty(key, "device").setValue(device);
-		deviceContainer.setChildrenAllowed(key, false);
-		keys.add(key);
+		device = new Device("TestDevice 2", "TestDevice 2 address", false);
+		device.setDescription("TestDevice 2 description");
+		button = device.getButton();
+		
+		deviceLayout.addComponent(button);
+		devices.put(device.getAddress(), device);
+		
+		device = new Device("TestDevice 3", "TestDevice 3 address", true);
+		device.setDescription("TestDevice 3 description");
+		button = device.getButton();
+		
+		deviceLayout.addComponent(button);
+		devices.put(device.getAddress(), device);
+		
+		for(String key : devices.keySet()){
+			final Device dev = devices.get(key);
+			
+			dev.getButton().addClickListener(new ClickListener() {
+				
+				@Override
+				public void buttonClick(ClickEvent event) {
+					deviceDescription.setReadOnly(false);
+					deviceDescription.setValue("Ip adress : " + dev.getAddress() + 
+									"\n\n" +dev.getDescription());
+					deviceDescription.setReadOnly(true);
+				}
+			});
+		}
 	}
 }
 

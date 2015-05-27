@@ -12404,10 +12404,10 @@ div.v-layout.v-horizontal.v-widget {
 	overflow: hidden;
 }
 
-.plannertheme .v-tree-node-caption-text-red {
+.plannertheme .unavailable-device {
 	color: #d20000;
 }
 
-.plannertheme .v-tree-node-caption-text-green {
+.plannertheme .available-device {
 	color: #00dd00;
 }
