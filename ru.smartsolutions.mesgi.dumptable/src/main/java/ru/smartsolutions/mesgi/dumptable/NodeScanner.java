@@ -71,9 +71,9 @@ public class NodeScanner implements Runnable {
 			long newLink = (Long) node.get("link");
 			if(dumptable.containsKey(ip)){
 				if(newLink != 0){
-					availability = "aviable";
+					availability = "available";
 				}
-				else availability = "unaviable";
+				else availability = "unavailable";
 			}
 			dumptable.put(ip, newLink);
 			if(availability != null){

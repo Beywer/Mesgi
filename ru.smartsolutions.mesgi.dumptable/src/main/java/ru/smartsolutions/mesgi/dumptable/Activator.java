@@ -22,13 +22,13 @@ public class Activator implements BundleActivator {
 		
 		EventAdmin eventAdmin = bindEventAdmin(this.context);
 		
-//		scanner = new NodeScanner(eventAdmin);
-//		Thread thr = new Thread(scanner);
-//		thr.setDaemon(true);
-//		thr.start();
+		scanner = new NodeScanner(eventAdmin);
+		Thread thr = new Thread(scanner);
+		thr.setDaemon(true);
+		thr.start();
 		
-		Timer timer = new Timer();
-		timer.schedule(new DeviceAddTask(eventAdmin), 5000, 2000);
+//		Timer timer = new Timer();
+//		timer.schedule(new DeviceAddTask(eventAdmin), 5000, 2000);
 		
 		System.out.println("Started dumptable service");
 	}

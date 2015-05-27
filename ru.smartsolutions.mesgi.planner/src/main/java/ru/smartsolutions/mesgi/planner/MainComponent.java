@@ -9,6 +9,7 @@ import java.util.TimerTask;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
 import ru.smartsolutions.mesgi.planner.model.Device;
@@ -58,7 +59,7 @@ public class MainComponent extends HorizontalLayout {
 
 //		if(context == null){
 //			context = Activator.getContext();
-//			nodeReciver = new NodeReciver(ui, deviceTree, deviceContainer);
+//			nodeReciver = new NodeReciever(ui, deviceTree, deviceContainer);
 //
 //			context.registerService(EventHandler.class, 
 //			nodeReciver, 
@@ -151,8 +152,8 @@ public class MainComponent extends HorizontalLayout {
 		
 		keys = new ArrayList<>();
 		setTreeData();
-//		timer = new Timer();
-//		timer.schedule(new DeviceChangeTask(), 1000, 1000);
+		timer = new Timer();
+		timer.schedule(new DeviceChangeTask(), 1000, 1000);
 	}
 	
 	private class DeviceChangeTask extends TimerTask{
