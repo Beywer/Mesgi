@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.planner;
+package ru.smartsolutions.mesgi.planner.ui;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

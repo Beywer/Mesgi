@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.planner;
+package ru.smartsolutions.mesgi.planner.ui;
 
 import java.util.Dictionary;
 import java.util.HashMap;
