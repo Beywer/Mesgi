@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.planner.ui;
+package ru.smartsolutions.mesgi.planner;
 
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import org.osgi.service.event.EventConstants;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
 import ru.smartsolutions.mesgi.planner.model.Device;
+import ru.smartsolutions.mesgi.planner.model.Task;
 
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.ui.Button;
@@ -30,15 +31,19 @@ public class MainComponent extends HorizontalLayout {
 
 
 //	Список устройств
-	private VerticalLayout verticalLayout;
+	private VerticalLayout leftVerticalLayout;
 	private Map<String, Device> devices;
 	private VerticalLayout deviceLayout;
 	//Описание устройств
 	private TextArea deviceDescription;
 	
 //	Список задач
-	private Tree taskTree;
-	private HierarchicalContainer taskContainer;
+	private VerticalLayout rightVerticalLayout;
+	private Map<String, Task> tasks;
+	private VerticalLayout taskLayout;
+	
+	private Button addTask;
+	private Button removeTask;
 	
 //	Базовые компоненты
 	private UI ui;
@@ -83,9 +88,9 @@ public class MainComponent extends HorizontalLayout {
 		
         devices = new HashMap<String, Device>();
 
-        Panel panel = new Panel(deviceLayout);
-        panel.setCaption("Устройства");
-        panel.setSizeFull();
+        Panel devicePanel = new Panel(deviceLayout);
+        devicePanel.setCaption("Устройства");
+        devicePanel.setSizeFull();
         
         //Описание устройтсва
         deviceDescription = new TextArea("Описание устройства");
@@ -93,9 +98,9 @@ public class MainComponent extends HorizontalLayout {
         deviceDescription.setWordwrap(false);
         
         //Компоновка списка устройств и описания
-        verticalLayout.addComponent(panel);
+        verticalLayout.addComponent(devicePanel);
         verticalLayout.addComponent(deviceDescription);
-        verticalLayout.setExpandRatio(panel, 5);
+        verticalLayout.setExpandRatio(devicePanel, 5);
         verticalLayout.setExpandRatio(deviceDescription, 3);
 
         //Таймлайн
@@ -104,23 +109,36 @@ public class MainComponent extends HorizontalLayout {
         timeLine.setStyleName("timeline-marg");
         
         //Список задач
-		taskTree = new Tree("Задачи");
-		taskContainer = new HierarchicalContainer();
-		taskTree.setContainerDataSource(taskContainer);
+        rightVerticalLayout = new VerticalLayout();
+        
+        Panel taskPanel = new Panel("Задачи");
+        
+        //Кнопки задач
+        addTask = new Button("Добавить");
+        removeTask = new Button("Удалить");
+        
+        HorizontalLayout buttonHL = new HorizontalLayout();
+        buttonHL.setWidth(100, Unit.PERCENTAGE);
+        buttonHL.setHeightUndefined();
+        buttonHL.addComponent(addTask);
+        buttonHL.addComponent(removeTask);
+        buttonHL.setExpandRatio(addTask, 1);
+        buttonHL.setExpandRatio(removeTask, 1);
+        
         
         //Компоновка всего интерфейса
 		this.addComponent(verticalLayout);
 	    this.addComponent(timeLine);
-		this.addComponent(taskTree);
+		this.addComponent(rightVerticalLayout);
 		
 		this.setExpandRatio(verticalLayout, 1.5f);
 		this.setExpandRatio(timeLine, 3);
-		this.setExpandRatio(taskTree, 1);
+		this.setExpandRatio(rightVerticalLayout, 1);
 		
 //		Работа с тестовыми данными
-		setTestData();
-		Timer timer = new Timer();
-		timer.schedule(new DeviceChangeTask(), 1000, 1000);
+//		setTestData();
+//		Timer timer = new Timer();
+//		timer.schedule(new DeviceChangeTask(), 1000, 1000);
 	}
 	
 	private class DeviceChangeTask extends TimerTask{
