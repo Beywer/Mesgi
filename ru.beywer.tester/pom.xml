@@ -1,0 +1,134 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ru.beywer</groupId>
+  <artifactId>ru.beywer.tester</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>bundle</packaging>
+  
+  <dependencies>
+	<!--   OSGI -->
+   	<dependency>
+  		<groupId>org.osgi</groupId>
+  		<artifactId>org.osgi.compendium</artifactId>
+  		<version>5.0.0</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.osgi</groupId>
+  		<artifactId>org.osgi.core</artifactId>
+  		<version>5.0.0</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	
+<!--    <dependency> -->
+<!--         <groupId>biz.aQute</groupId> -->
+<!--         <artifactId>bndlib</artifactId> -->
+<!--         <version>1.50.0</version> -->
+<!--         <scope>provided</scope> -->
+<!--     </dependency> -->
+    
+    <dependency>
+         <groupId>org.apache.felix</groupId>
+         <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
+         <version>1.2.8</version>
+         <scope>provided</scope>
+    </dependency>
+  	
+  </dependencies>
+  
+<!--      <distributionManagement> -->
+<!--   		<repository> -->
+<!--      		<id>SmartSolutions</id> -->
+<!--      		<name>Smart Solutions</name> -->
+<!--      		<url>http://10.10.0.66:8081/nexus/content/repositories/releases/</url> -->
+<!--      		<uniqueVersion>false</uniqueVersion> -->
+<!--  	 	</repository> -->
+<!--   		<snapshotRepository> -->
+<!--      		<id>SmartSolutions</id> -->
+<!--      		<name>Smart Solutions</name> -->
+<!--      		<url>http://10.10.0.66:8081/nexus/content/repositories/snapshots/</url> -->
+<!--      		<uniqueVersion>false</uniqueVersion> -->
+<!--   		</snapshotRepository> -->
+<!-- 	</distributionManagement> -->
+  
+  
+     <build>
+	  	<plugins>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-jar-plugin</artifactId>
+	            <configuration>
+	                <archive>
+	  					<manifestFile>META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+	            </configuration>
+	        </plugin>
+	  		<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.4</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+<!-- 					<execution> -->
+<!-- 						<id>bundle-install</id> -->
+<!-- 						<phase>install</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>install</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+				</executions>
+				<configuration>
+					<supportedProjectTypes>
+						<supportedProjectType>bundle</supportedProjectType>
+						<supportedProjectType>jar</supportedProjectType>
+					</supportedProjectTypes>
+					<manifestLocation>META-INF/</manifestLocation>
+					<instructions>
+					
+						<_dsannotations>*</_dsannotations>
+<!--        					<Service-Component>*</Service-Component> -->
+					
+<!--                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName> -->
+<!-- 						<Bundle-Version>${project.version}</Bundle-Version> -->
+<!-- 						<Bundle-Name>BeywerTester</Bundle-Name> -->
+<!-- 						<Bundle-Activator>${project.artifactId}.Activator</Bundle-Activator> -->
+<!-- 						<Service-Component>OSGI-INF/DevicesObserverComponent.xml</Service-Component> -->
+
+<!-- 						<Embed-Dependency>*;scope=runtime|system;inline=false</Embed-Dependency> -->
+<!-- 					    <Embed-Directory>lib</Embed-Directory> -->
+					    
+<!-- 						<Import-Package> -->
+<!-- 							* -->
+<!-- 						</Import-Package> -->
+						
+<!-- 				        <Export-Package>{local-packages};version="${project.version}"</Export-Package> -->
+				        
+					</instructions>
+				</configuration>
+			</plugin>
+			
+
+			<plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+                <version>1.20.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-scr-scrdescriptor</id>
+                        <goals>
+                            <goal>scr</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+  </build>
+  
+</project>

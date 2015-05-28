@@ -4,10 +4,12 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+
 public class PlannedTask {
 	
 	private Interval plannedInterval;
 	private String id;
+	private int duration;
 	private Boolean successed;
 	
 	public PlannedTask(String id) {
@@ -43,5 +45,13 @@ public class PlannedTask {
 
 	public void setSuccessed(Boolean successed) {
 		this.successed = successed;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 }

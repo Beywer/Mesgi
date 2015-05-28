@@ -12411,3 +12411,15 @@ div.v-layout.v-horizontal.v-widget {
 .plannertheme .available-device {
 	color: #00dd00;
 }
+
+.plannertheme .red-button {
+	background: #ff0000;
+	border: 1px solid #ee0000;
+	box-shadow: inset 0 0px 0 white, inset 0 0px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+}
+
+.plannertheme .green-button {
+	background: #00ff00;
+	border: 1px solid #00ee00;
+	box-shadow: inset 0 0px 0 white, inset 0 0px 0 #e7e7e7, 0 2px 3px rgba(0, 0, 0, 0.05);
+}

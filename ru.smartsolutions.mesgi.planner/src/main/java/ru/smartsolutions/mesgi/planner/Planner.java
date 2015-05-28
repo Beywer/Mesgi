@@ -40,6 +40,8 @@ public class Planner {
 
 	private void planTasks(){
 		
+		plan = new ArrayList<>();
+		
 		//Сортировка задач по времени завершения
 		Collections.sort(tasks);
 		
@@ -66,5 +68,8 @@ public class Planner {
 			startMillis = endMillis + 10000;
 		}
 	}
-	
+
+	public List<Task> getTasks() {
+		return tasks;
+	}
 }
