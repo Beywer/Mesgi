@@ -7,14 +7,12 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.vaadin.ui.Button;
-
 
 public class Task implements Comparable<Task> {
 	
 	private String name;
 	private String id;
-	private String deviceIp;
+	private Device device;
 	private int duration;
 	private Interval intervalAllowed;
 	
@@ -22,6 +20,7 @@ public class Task implements Comparable<Task> {
 		this.name = name;
 		intervalAllowed = null;
 		duration = 0;
+		device = null;
 		id = UUID.randomUUID().toString();
 	}
 	
@@ -79,11 +78,11 @@ public class Task implements Comparable<Task> {
 		} else return id + "[:]";
 	}
 
-	public String getDeviceIp() {
-		return deviceIp;
+	public Device getDevice() {
+		return device;
 	}
 
-	public void setDeviceIp(String deviceIp) {
-		this.deviceIp = deviceIp;
+	public void setDevice(Device device) {
+		this.device = device;
 	}
 }

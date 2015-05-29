@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.planner;
+package ru.smartsolutions.mesgi.planner.interfaces;
 
 import ru.smartsolutions.mesgi.planner.model.Device;
 

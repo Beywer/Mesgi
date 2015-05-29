@@ -34,12 +34,34 @@
 
   // Insert your own theme rules here
  
+.black-task {
+	color: #000000;
+	text-align : left;
+	background: #ffffff;
+	border: 1px solid #ffffff;
+	box-shadow: inset 0 0px 0 white,  
+		inset 0 0px 0 #e7e7e7, 
+		0 2px 3px rgba(0, 0, 0, 0.05);
+}
+ 
 .unavailable-device {
 	color: #d20000;
+	text-align : left;
+	background: #ffffff;
+	border: 1px solid #ffffff;
+	box-shadow: inset 0 0px 0 white,  
+		inset 0 0px 0 #e7e7e7, 
+		0 2px 3px rgba(0, 0, 0, 0.05);
 }
 
 .available-device {
 	color: #00dd00;
+	text-align : left;
+	background: #ffffff;
+	border: 1px solid #ffffff;
+	box-shadow: inset 0 0px 0 white,  
+		inset 0 0px 0 #e7e7e7, 
+		0 2px 3px rgba(0, 0, 0, 0.05);
 }
 .red-button{
 	background: #ff0000;

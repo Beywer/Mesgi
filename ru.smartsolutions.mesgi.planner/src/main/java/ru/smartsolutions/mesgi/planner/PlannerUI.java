@@ -3,6 +3,7 @@ package ru.smartsolutions.mesgi.planner;
 import javax.servlet.annotation.WebServlet;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
+import ru.smartsolutions.mesgi.planner.uicomponents.MainComponent;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.annotations.Push;

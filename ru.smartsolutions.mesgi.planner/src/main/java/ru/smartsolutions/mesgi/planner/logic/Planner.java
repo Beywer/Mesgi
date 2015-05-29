@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.planner;
+package ru.smartsolutions.mesgi.planner.logic;
 
 import java.util.ArrayList;
 import java.util.Collections;
