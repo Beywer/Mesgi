@@ -75,10 +75,21 @@ public class TaskPannel extends VerticalLayout {
 		
 		//TODO выпилить список всех задач из DataProvider
 
+		//создание кнопок
+		addTaskBut = new Button("Добавить");
+		addTaskBut.setWidth(100,Unit.PERCENTAGE);
+		addTaskBut.setStyleName("friendly");
+		removeTaskBut = new Button("Удалить");
+		removeTaskBut.setWidth(100,Unit.PERCENTAGE);
+		removeTaskBut.setStyleName("danger");
+		//расположить кнопки горизонтально
 		buttonHL = new HorizontalLayout();
 		buttonHL.setSizeFull();
-		addTaskBut = new Button("Добавить");
-		removeTaskBut = new Button("Удалить");
+		buttonHL.setSpacing(true);
+		buttonHL.addComponent(addTaskBut);
+		buttonHL.addComponent(removeTaskBut);
+		//расположить кнопки над задачами
+		taskPanelVL.addComponent(buttonHL);
 		
 		//Панель заявок
 		Panel taskPanel = new Panel();
