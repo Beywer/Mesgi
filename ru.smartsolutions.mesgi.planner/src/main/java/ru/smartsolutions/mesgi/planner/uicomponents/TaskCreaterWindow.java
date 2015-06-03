@@ -85,7 +85,6 @@ public class TaskCreaterWindow extends Window {
 		buttonsHL.addComponent(back);
 		buttonsHL.setComponentAlignment(back, Alignment.MIDDLE_CENTER);
 		
-		
 		fromField.setResolution(Resolution.SECOND);
 		fromField.setValue(new Date());
 		toField.setResolution(Resolution.SECOND);
@@ -124,7 +123,8 @@ public class TaskCreaterWindow extends Window {
 					
 					TaskCreaterWindow.this.close();
 				}
-				else UI.getCurrent().addWindow(new MessageBox(message));
+				else
+					UI.getCurrent().addWindow(new MessageBox(message));
 			}
 		});
 		back.addClickListener(new ClickListener() {

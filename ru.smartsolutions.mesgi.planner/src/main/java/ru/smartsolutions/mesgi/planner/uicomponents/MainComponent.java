@@ -78,8 +78,11 @@ public class MainComponent extends HorizontalLayout{
 		
 		devices = new HashMap<String, Device>();
 
-		buildInterface();
-		createListeners();
+		TaskPannel devicePannel = new TaskPannel();
+		this.addComponent(devicePannel);
+		
+//		buildInterface();
+//		createListeners();
 
 //		if(context == null){
 //			context = Activator.getContext();
@@ -93,9 +96,9 @@ public class MainComponent extends HorizontalLayout{
 		
 
 //		Работа с тестовыми данными
-		setTestData();
-		Timer timer = new Timer();
-		timer.schedule(new TestUiTask(), 1000, 1000);
+//		setTestData();
+//		Timer timer = new Timer();
+//		timer.schedule(new TestUiTask(), 1000, 1000);
 	}
 
 	private Dictionary<String, Object> getHandlerServiceProperties(String... topics) {
@@ -206,7 +209,9 @@ public class MainComponent extends HorizontalLayout{
 						@Override
 						public void windowClose(CloseEvent e) {
 							System.out.println(window);
-							addTask(window.getTask());
+							Task task = window.getTask();
+							if(task != null)
+								addTask(window.getTask());
 						}
 					});
 					
@@ -298,6 +303,7 @@ public class MainComponent extends HorizontalLayout{
 			}
 		}
 		
+//		TODO change
 //		task.setDevice(nodeReciver.getDevice(ip));
 		task.setDevice(devices.get(ip));
 
