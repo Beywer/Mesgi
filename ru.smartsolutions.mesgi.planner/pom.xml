@@ -133,6 +133,13 @@
 			<version>2.7</version>
 <!-- 			<scope>provided</scope> -->
 		</dependency>
+		
+		<dependency>
+			<groupId>ru.smartsolutions.mesgi</groupId>
+			<artifactId>ru.smartsolutions.mesgi.model</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+<!-- 			<scope>provided</scope> -->
+		</dependency>
 	</dependencies>
 
 	<build>

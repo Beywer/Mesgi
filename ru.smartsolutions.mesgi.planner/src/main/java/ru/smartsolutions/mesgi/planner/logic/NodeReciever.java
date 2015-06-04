@@ -6,7 +6,7 @@ import java.util.Map;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-import ru.smartsolutions.mesgi.planner.model.Device;
+import ru.smartsolutions.mesgi.model.Device;
 import ru.smartsolutions.mesgi.planner.uicomponents.MainComponent;
 
 public class NodeReciever implements EventHandler {
@@ -17,30 +17,30 @@ public class NodeReciever implements EventHandler {
 	
 	public void handleEvent(Event event) {
 		
-		String ip = (String) event.getProperty("IPv6");
-		String availabilityStr = (String) event.getProperty("Availability");
-		Boolean availability = true;
-		if(availabilityStr.equals("unavailable")) availability = false;
-		
-		//Если узел еще не был в сети
-		if(!devices.containsKey(ip)){ 
-			//Создается новое устройтсов
-			Device device = new Device("",ip,availability);
-			devices.put(ip, device);
-			//TODO получить информацию об устройстве
-			System.out.println("NodeReceiver: recieved new device " + ip + " " + availability);
-			mainComponent.addDevice(device);
-			
-		} else {
-			Boolean oldAvailability = devices.get(ip).getAvailability();
-			//Если у уже известного узла именилась доступность
-			if(oldAvailability == availability){
-				Device device = devices.get(ip);
-				device.setAvailability(availability);
-				System.out.println("NodeReceiver: recieved changed state" + ip + " " + availability);
-				mainComponent.updateDeviceAvailability(device);
-			}
-		}
+//		String ip = (String) event.getProperty("IPv6");
+//		String availabilityStr = (String) event.getProperty("Availability");
+//		Boolean availability = true;
+//		if(availabilityStr.equals("unavailable")) availability = false;
+//		
+//		//Если узел еще не был в сети
+//		if(!devices.containsKey(ip)){ 
+//			//Создается новое устройтсов
+//			Device device = new Device("",ip,availability);
+//			devices.put(ip, device);
+//			//TODO получить информацию об устройстве
+//			System.out.println("NodeReceiver: recieved new device " + ip + " " + availability);
+////			mainComponent.addDevice(device);
+//			
+//		} else {
+//			Boolean oldAvailability = devices.get(ip).getAvailability();
+//			//Если у уже известного узла именилась доступность
+//			if(oldAvailability == availability){
+//				Device device = devices.get(ip);
+//				device.setAvailability(availability);
+//				System.out.println("NodeReceiver: recieved changed state" + ip + " " + availability);
+////				mainComponent.updateDeviceAvailability(device);
+//			}
+//		}
 	}
 	
 //	private void changedDeviceAvailability(final String ip, final String availability){

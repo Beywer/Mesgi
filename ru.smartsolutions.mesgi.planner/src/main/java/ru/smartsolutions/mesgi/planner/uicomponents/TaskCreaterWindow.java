@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.joda.time.Interval;
 
-import ru.smartsolutions.mesgi.planner.model.Task;
+import ru.smartsolutions.mesgi.model.Task;
 
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Alignment;

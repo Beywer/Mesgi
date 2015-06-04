@@ -5,8 +5,11 @@ import java.util.Hashtable;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
+import ru.smartsolutions.mesgi.model.Device;
+import ru.smartsolutions.mesgi.planner.Activator;
 import ru.smartsolutions.mesgi.planner.logic.NodeReciever;
 
 import com.vaadin.ui.HorizontalLayout;
@@ -20,7 +23,7 @@ public class MainComponent extends HorizontalLayout{
 //	Таймлайн
 	private VTimeLine timeLine;
 //	Список устройств
-	private DevicePannel devicePannel;
+	private DevicePanel devicePannel;
 //	Список задач-заявок и выполненных
 	private TaskPannel taskPannel;
 	
@@ -34,7 +37,7 @@ public class MainComponent extends HorizontalLayout{
 		this.ui = ui;
 		this.setSizeFull();
 		
-		devicePannel = new DevicePannel();
+		devicePannel = new DevicePanel();
 		timeLine = new VTimeLine();
 		taskPannel = new TaskPannel();
 		
@@ -49,27 +52,40 @@ public class MainComponent extends HorizontalLayout{
 		this.setExpandRatio(taskPannel, 2);
 		
 
-//		if(context == null){
-//			context = Activator.getContext();
-//			nodeReciver = new NodeReciever(ui, deviceTree, deviceContainer);
-//
-//			context.registerService(EventHandler.class, 
-//			nodeReciver, 
-//			getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
-//			System.out.println("Crated eventHandler in component");
-//		}
+		if(context == null){
+			context = Activator.getContext();
+
+			context.registerService(EventHandler.class, 
+			nodeReciver, 
+			getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
+		}
 		
 
-//		Работа с тестовыми данными
-//		setTestData();
-//		Timer timer = new Timer();
-//		timer.schedule(new TestUiTask(), 1000, 1000);
 	}
 
 	private Dictionary<String, Object> getHandlerServiceProperties(String... topics) {
 		Dictionary<String, Object> eventHandlerProperties = new Hashtable<String, Object>();
 		eventHandlerProperties.put(EventConstants.EVENT_TOPIC, topics);
 		return eventHandlerProperties;
+	}
+	
+	public void changeDeviceState(Device device){
+		devicePannel.changeDeviceState(device);
+		updateUI();
+	}
+	
+	public void addDevice(Device device){
+		devicePannel.addDevice(device);
+		updateUI();
+	}
+	
+	private void updateUI(){
+		ui.access(new Runnable() {
+			@Override
+			public void run() {
+				ui.push();
+			}
+		});
 	}
 	
 	
