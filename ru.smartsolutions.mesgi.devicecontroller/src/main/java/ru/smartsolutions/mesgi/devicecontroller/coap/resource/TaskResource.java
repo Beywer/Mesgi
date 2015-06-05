@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.devicecontroller;
+package ru.smartsolutions.mesgi.devicecontroller.coap.resource;
 
 import org.eclipse.californium.core.CoapResource;
 

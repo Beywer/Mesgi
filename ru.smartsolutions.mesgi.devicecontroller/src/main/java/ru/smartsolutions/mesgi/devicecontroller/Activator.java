@@ -4,6 +4,8 @@ import org.eclipse.californium.core.CoapServer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import ru.smartsolutions.mesgi.devicecontroller.coap.resource.PlanResource;
+
 public class Activator implements BundleActivator {
 
 	private CoapServer coapServer;

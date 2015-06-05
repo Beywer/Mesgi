@@ -1,6 +1,8 @@
 package ru.smartsolutions.mesgi.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
@@ -29,6 +31,37 @@ public class Task implements Comparable<Task>, Serializable {
 		
 		device = null;
 		plannedInterval = null;
+	}
+	
+	public Task(Map<String, Object> params) {
+		name = (String) params.get("name");
+		id = (String) params.get("id");
+		duration = (int) Math.round((Double)params.get("duration"));
+		device = (Device) params.get("device");
+		
+		double aStartD = (Double) params.get("aStart");
+		long aStart = Math.round(aStartD);
+		if(aStart == -2)
+			intervalAllowed = null;
+		else{
+			double aEndD = (Double) params.get("aEnd");
+			long aEnd = Math.round(aEndD);
+			intervalAllowed = new Interval(aStart, aEnd);
+			System.out.println("By params [aStart] : " + aStart);
+			System.out.println("By params [aEnd] : " + aEnd);
+		}
+		
+		double pStartD = (Double) params.get("pStart");
+		long pStart = Math.round(pStartD);
+		if(pStart == -2)
+			plannedInterval = null;
+		else{
+			double pEndD = (Double) params.get("pEnd");
+			long pEnd = Math.round(pEndD);
+			plannedInterval = new Interval(pStart, pEnd);
+			System.out.println("By params [pStart] : " + pStart);
+			System.out.println("By params [pEnd] : " + pEnd);
+		}
 	}
 	
 	public String getName() {
@@ -98,5 +131,30 @@ public class Task implements Comparable<Task>, Serializable {
 
 	public void setPlannedInterval(Interval plannedInterval) {
 		this.plannedInterval = plannedInterval;
+	}
+	
+	public Map<String, Object> getParameters(){
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("name", name);
+		parameters.put("id", id);
+		parameters.put("duration", duration);
+		if(intervalAllowed != null){
+			parameters.put("aStart", intervalAllowed.getStartMillis());
+			parameters.put("aEnd", intervalAllowed.getEndMillis());
+		} else {
+			parameters.put("aStart", -2l);
+			parameters.put("aEnd", -2l);
+		}
+		if(plannedInterval != null){
+			parameters.put("pStart", plannedInterval.getStartMillis());
+			parameters.put("pEnd", plannedInterval.getEndMillis());
+		} else {
+			parameters.put("pStart", -2l);
+			parameters.put("pEnd", -2l);
+		}
+		parameters.put("device", device);
+		
+		return parameters;
 	}
 }
