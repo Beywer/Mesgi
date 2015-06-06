@@ -6,18 +6,17 @@ public class Device {
 	private String name;
 	private String address;
 	private String Description;
-	private long connection;
+	private boolean availability;
 
 	public Device(String name) {
 		this.name = name;
 		address = null;
-		connection = 0;
 	}
 
-	public Device(String name, String address, long connection) {
+	public Device(String name, String address, boolean availability) {
 		this.name = name;
 		this.address = address;
-		this.connection = connection;
+		this.availability = availability;
 	}
 	
 	public String getName() {
@@ -44,11 +43,11 @@ public class Device {
 		Description = description;
 	}
 
-	public long getConnection() {
-		return connection;
+	public boolean isAvailability() {
+		return availability;
 	}
 
-	public void setConnection(long connection) {
-		this.connection = connection;
+	public void setAvailability(boolean availability) {
+		this.availability = availability;
 	}
 }
