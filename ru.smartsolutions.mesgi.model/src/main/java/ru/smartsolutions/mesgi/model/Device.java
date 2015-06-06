@@ -5,7 +5,7 @@ public class Device {
 
 	private String name;
 	private String address;
-	private String Description;
+	private String description;
 	private boolean availability;
 
 	public Device(String name) {
@@ -19,6 +19,12 @@ public class Device {
 		this.availability = availability;
 	}
 	
+	public Device(String address, boolean availability) {
+		super();
+		this.address = address;
+		this.availability = availability;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -36,11 +42,17 @@ public class Device {
 	}
 
 	public String getDescription() {
-		return Description;
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("Наименование: " + name + "\n");
+		sb.append("IPv6: " + address);
+		sb.append("\n\n" + description);
+		
+		return sb.toString();
 	}
 
 	public void setDescription(String description) {
-		Description = description;
+		this.description = description;
 	}
 
 	public boolean isAvailability() {

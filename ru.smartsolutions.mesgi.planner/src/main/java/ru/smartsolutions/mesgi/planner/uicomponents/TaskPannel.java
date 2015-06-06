@@ -2,8 +2,14 @@ package ru.smartsolutions.mesgi.planner.uicomponents;
 
 import java.util.Map;
 
+import ru.smartsolutions.mesgi.model.Task;
+
+import com.vaadin.server.ClientConnector.DetachEvent;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HasComponents;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
@@ -11,6 +17,7 @@ import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
@@ -37,6 +44,7 @@ public class TaskPannel extends VerticalLayout {
 	}
 	
 	private void createListeners() {
+		
 //		переключение описаний вместе с табшитом
 		tabSheet.addSelectedTabChangeListener(new SelectedTabChangeListener() {
 			
@@ -63,15 +71,73 @@ public class TaskPannel extends VerticalLayout {
 				}
 			}
 		});
+		
+//		добавлиена задачи
+		addTaskBut.addClickListener(new ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				
+				//окно создания задачи
+				final TaskCreaterWindow taskCreater = new TaskCreaterWindow();
+				//дейтсвия по закрытию
+				taskCreater.addDetachListener(new DetachListener() {
+					
+					@Override
+					public void detach(DetachEvent event) {
+						DataProvider.addTask(taskCreater.getTask());
+					}
+				});
+				
+				UI.getCurrent().addWindow(taskCreater);
+				
+			}
+		});
 	}
 
+	public void addTask(Task task){
+
+//		создается кнопка
+		Button taskButton = new Button(task.getName());
+		taskButton.setWidth(100, Unit.PERCENTAGE);
+		
+//		выбор цвета в зависимости от заплаинрованности задачи
+		if(task.getPlannedInterval() == null) taskButton.setStyleName("available-device");
+		else taskButton.setStyleName("unavailable-device");
+
+//		создание и отображение информации
+		final StringBuilder sb = new StringBuilder();
+		sb.append("Наименование: " + task.getName());
+		sb.append("Id: " + task.getId());
+		
+		taskButton.addClickListener(new ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				taskDescription.setReadOnly(false);
+				taskDescription.setValue(sb.toString());
+				taskDescription.setReadOnly(true);
+			}
+		});
+		
+//		добаление на форму
+		taskPanelVL.addComponent(taskButton);
+		
+//		обновления родителя
+		HasComponents component =  getParent();
+		if(component instanceof MainComponent){
+			((MainComponent)component).updateUI();
+		}
+		
+	}
+	
 	private void buildInterface(){
 		
 		this.setSizeFull();
 		
 //		VerticalLayout для списка задач
 		taskPanelVL = new VerticalLayout();
-		taskPanelVL.setSizeFull();
+		taskPanelVL.setWidth(100, Unit.PERCENTAGE);
 		
 		//TODO выпилить список всех задач из DataProvider
 
@@ -111,14 +177,6 @@ public class TaskPannel extends VerticalLayout {
 		tabSheet.setSizeFull();
 		tabSheet.addTab(taskPanel, "Задачи");
 		tabSheet.addTab(compTaskPanel, "Выполненные задачи");
-
-		Tab tab0 = tabSheet.getTab(taskPanel);
-		System.out.println("Таб задач  " + tab0);
-		System.out.println("Таб задач  " + tabSheet.getTabPosition(tab0));
-		
-		Tab tab1 = tabSheet.getTab(compTaskPanel);
-		System.out.println("Таб выполненных задач  " + tab1);
-		System.out.println("Таб выполненных задач  " + tabSheet.getTabPosition(tab1));
 		
 //		описание заявки
 		taskDescription = new TextArea("Описание задачи");

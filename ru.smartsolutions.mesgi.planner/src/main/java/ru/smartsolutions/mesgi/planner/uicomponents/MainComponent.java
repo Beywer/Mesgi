@@ -1,24 +1,16 @@
 package ru.smartsolutions.mesgi.planner.uicomponents;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
-import org.osgi.framework.BundleContext;
-import org.osgi.service.event.EventConstants;
-import org.osgi.service.event.EventHandler;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
 import ru.smartsolutions.mesgi.model.Device;
-import ru.smartsolutions.mesgi.planner.Activator;
-import ru.smartsolutions.mesgi.planner.logic.NodeReciever;
 
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 
 @SuppressWarnings("serial")
 public class MainComponent extends HorizontalLayout{
-
-	private static final long serialVersionUID = -7389175932554905939L;
 
 //	Таймлайн
 	private VTimeLine timeLine;
@@ -29,8 +21,8 @@ public class MainComponent extends HorizontalLayout{
 	
 //	Базовые компоненты
 	private UI ui;
-	private BundleContext context; 
-	private NodeReciever nodeReciver; //eventadmin ЕventHandler
+	
+	private Timer timer;
 	
 	public MainComponent(UI ui) {
 		
@@ -44,42 +36,39 @@ public class MainComponent extends HorizontalLayout{
 
 		this.addComponent(devicePannel);
 		this.addComponent(timeLine);
-        timeLine.setWidth(108, Unit.PERCENTAGE);
+        timeLine.setWidth(100, Unit.PERCENTAGE);
 		this.addComponent(taskPannel);
 		
 		this.setExpandRatio(devicePannel, 2);
 		this.setExpandRatio(timeLine, 5);
 		this.setExpandRatio(taskPannel, 2);
 		
+		DataProvider.registerComponent(this);
 
-		if(context == null){
-			context = Activator.getContext();
+		timer = new Timer();
+//		timer.schedule(new TestTask(), 2000, 2000);
+	}
 
-			context.registerService(EventHandler.class, 
-			nodeReciver, 
-			getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
+	@Override
+		public void detach() {
+			super.detach();
+			System.out.println("Detached");
+			DataProvider.removeComponent(this);
+			if(timer != null)
+				timer.cancel();
 		}
-		
-
-	}
-
-	private Dictionary<String, Object> getHandlerServiceProperties(String... topics) {
-		Dictionary<String, Object> eventHandlerProperties = new Hashtable<String, Object>();
-		eventHandlerProperties.put(EventConstants.EVENT_TOPIC, topics);
-		return eventHandlerProperties;
-	}
 	
-	public void changeDeviceState(Device device){
-		devicePannel.changeDeviceState(device);
-		updateUI();
-	}
+//	public void changeDeviceState(Device device){
+//		devicePannel.changeDeviceState(device);
+//		updateUI();
+//	}
+//	
+//	public void addDevice(Device device){
+//		devicePannel.addDevice(device);
+//		updateUI();
+//	}
 	
-	public void addDevice(Device device){
-		devicePannel.addDevice(device);
-		updateUI();
-	}
-	
-	private void updateUI(){
+	public void updateUI(){
 		ui.access(new Runnable() {
 			@Override
 			public void run() {
@@ -87,6 +76,47 @@ public class MainComponent extends HorizontalLayout{
 			}
 		});
 	}
+
+	public DevicePanel getDevicePannel() {
+		return devicePannel;
+	}
+
+	public TaskPannel getTaskPannel() {
+		return taskPannel;
+	}
+	
+	public VTimeLine getTimeLine() {
+		return timeLine;
+	}
+
+
+
+
+	private class TestTask extends TimerTask{
+
+		private int count = 0;
+		
+		@Override
+		public void run() {
+			Device device = new Device("Adr " + count, (count / 3) == 0);
+			device.setDescription("Descr " + count);
+			device.setName("Dev " + count);
+			DataProvider.addDevice(device);
+			System.out.println("TimerTask: New device");
+			
+			count++;
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 //	private void updateTaskPlan(String deviceIp){
@@ -261,6 +291,12 @@ public class MainComponent extends HorizontalLayout{
 //		}
 //		
 //	}
+	
+	@Override
+		public String toString() {
+			return "MainComponent";
+		}
+	
 }
 
 

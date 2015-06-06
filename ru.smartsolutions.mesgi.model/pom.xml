@@ -12,6 +12,12 @@
 			<version>2.7</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>5.0.0</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
   
 	<distributionManagement>
@@ -73,6 +79,7 @@
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Bundle-Name>Mesgi model classes</Bundle-Name>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Activator>${project.artifactId}.Activator</Bundle-Activator>
 
 <!-- 						<Embed-Dependency>*;scope=compile|runtime|system;inline=false</Embed-Dependency> -->
 <!-- 					    <Embed-Directory>lib</Embed-Directory> -->

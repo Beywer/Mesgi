@@ -35,8 +35,6 @@ public class TaskCreaterWindow extends Window {
 	
 	public TaskCreaterWindow(){
 
-		System.out.println(this);
-		
 		this.setDraggable(false);
 		this.center();
 		this.setModal(true);
@@ -101,10 +99,12 @@ public class TaskCreaterWindow extends Window {
 					message += "\nНе введена продолжительность задачи";
 				else try{
 					long duretionMillis = Integer.valueOf(duration.getValue())*60*1000;
-					long intervalDuration = toField.getValue().getTime() - 
-							fromField.getValue().getTime();
-					if(duretionMillis >= intervalDuration) 
-						message += "\nДлительность задачи больше, чем заданный интервал";
+					if(duretionMillis > 0){
+						long intervalDuration = toField.getValue().getTime() - 
+								fromField.getValue().getTime();
+						if(duretionMillis >= intervalDuration) 
+							message += "\nДлительность задачи больше, чем заданный интервал";
+					} else throw new NumberFormatException();
 				} catch (NumberFormatException e){
 					message += "\nДлительность введена не корректно";
 				} 
@@ -112,14 +112,11 @@ public class TaskCreaterWindow extends Window {
 					message += "\nДата окончания должна быть больше даты начала";
 				
 				if(message.equals("")){
-					System.out.println("Все введено правильно");
 					
 					task = new Task(name.getValue());
 					task.setDuration(Integer.valueOf(duration.getValue()));
 					task.setIntervalAllowed(new Interval(fromField.getValue().getTime(),
 							toField.getValue().getTime()));
-					
-					System.out.println("О! Таска !   " +task);
 					
 					TaskCreaterWindow.this.close();
 				}

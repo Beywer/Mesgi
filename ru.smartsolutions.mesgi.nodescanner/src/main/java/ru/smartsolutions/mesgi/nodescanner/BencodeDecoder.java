@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.dumptable;
+package ru.smartsolutions.mesgi.nodescanner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;

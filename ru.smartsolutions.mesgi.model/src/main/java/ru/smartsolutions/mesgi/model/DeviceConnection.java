@@ -24,9 +24,14 @@ public class DeviceConnection implements Comparable<DeviceConnection> {
 	public int compareTo(DeviceConnection o) {
 		int result = 0;
 		
-		if(connection < o.getConnection()) result = -1;
-		else if (connection > o.getConnection()) result = 1; 
+		if(connection > o.getConnection()) result = -1;
+		else if (connection < o.getConnection()) result = 1; 
 		
 		return result;
+	}
+	
+	@Override
+	public String toString() {
+		return "\t" + ip + "  " + connection + "\n";
 	}
 }

@@ -1,27 +1,38 @@
 package ru.smartsolutions.mesgi.planner.logic;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 import ru.smartsolutions.mesgi.model.Device;
-import ru.smartsolutions.mesgi.planner.uicomponents.MainComponent;
+import ru.smartsolutions.mesgi.planner.uicomponents.DataProvider;
 
 public class NodeReciever implements EventHandler {
+	
+	private int count;
+	
+	public NodeReciever() {
+		count = 0;
+	}
 
-	private Map<String, Device> devices;
-	
-	private MainComponent mainComponent;
-	
 	public void handleEvent(Event event) {
 		
-//		String ip = (String) event.getProperty("IPv6");
-//		String availabilityStr = (String) event.getProperty("Availability");
-//		Boolean availability = true;
-//		if(availabilityStr.equals("unavailable")) availability = false;
-//		
+		String ip = (String) event.getProperty("IPv6");
+		Boolean availability = (Boolean) event.getProperty("Availability");
+		
+		//
+		if(DataProvider.checkDevice(ip)){
+			DataProvider.updateDeviceAvailability(ip, availability);
+		}
+		else {
+			Device device = new Device(ip, availability);
+			//TODO получить настоящее описание и имя устройства
+			device.setName("Device " + count);
+			device.setDescription("Descr " + count);
+			count ++;
+			
+			DataProvider.addDevice(device);
+		}
+
 //		//Если узел еще не был в сети
 //		if(!devices.containsKey(ip)){ 
 //			//Создается новое устройтсов
@@ -94,13 +105,4 @@ public class NodeReciever implements EventHandler {
 //		});
 //	}
 	
-	public NodeReciever(MainComponent mainComponent) {
-		
-		this.mainComponent = mainComponent;
-		devices = new HashMap<String, Device>();
-	}
-	
-	public Device getDevice(String ip){
-		return devices.get(ip);
-	}
 }

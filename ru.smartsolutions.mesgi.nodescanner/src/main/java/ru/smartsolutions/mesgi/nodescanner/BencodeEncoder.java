@@ -1,4 +1,4 @@
-package ru.smartsolutions.mesgi.dumptable;
+package ru.smartsolutions.mesgi.nodescanner;
 
 import java.util.Iterator;
 import java.util.List;
