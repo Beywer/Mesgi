@@ -10,12 +10,14 @@ import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 import org.osgi.service.http.HttpService;
 
+import ru.smartsolutions.mesgi.model.INodeScanner;
 import ru.smartsolutions.mesgi.planner.logic.NodeReciever;
 
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
 	private HttpService httpService;
+	private INodeScanner nodeScanner;
 
 	@Override
 	public void start(BundleContext context) throws Exception {

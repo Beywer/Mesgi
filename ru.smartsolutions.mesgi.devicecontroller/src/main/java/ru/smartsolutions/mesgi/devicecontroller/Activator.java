@@ -18,12 +18,12 @@ public class Activator implements BundleActivator {
 		coapServer.add(taskresource);
 		coapServer.start();
 		
-		System.out.println("Device controller2 started");
+		System.out.println("Device controller started");
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		coapServer.stop();
-		System.out.println("Device controller3 stopped");
+		System.out.println("Device controller stopped");
 	}
 
 }

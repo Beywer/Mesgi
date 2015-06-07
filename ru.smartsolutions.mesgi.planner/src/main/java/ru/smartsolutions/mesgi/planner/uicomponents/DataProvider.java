@@ -12,6 +12,10 @@ import ru.smartsolutions.mesgi.model.Device;
 import ru.smartsolutions.mesgi.model.Result;
 import ru.smartsolutions.mesgi.model.Task;
 
+/**
+ * @author beywer
+ *
+ */
 public class DataProvider {
 
 	private static Map<String, Device> devices = new HashMap<>();
@@ -81,18 +85,7 @@ public class DataProvider {
 		addPlannedTask(device, fictiveTask);
 		
 		for(MainComponent component : components){
-			
-//			VTimeLine timeLine = component.getTimeLine();
-//			timeLine.getDatatable().add(VTimeLine.createRow(
-//					0 + 15*60*1000,
-//					0 + 15*60*1000,
-//					device.getName(), device.getAddress() ));
-//			timeLine.setCurrentInterval(System.currentTimeMillis() - 15*60*1000,
-//										System.currentTimeMillis() + 2*60*60*1000);
-			
 			component.getDevicePannel().addDevice(device);
-			
-
 		}
 		
 	}
@@ -140,5 +133,8 @@ public class DataProvider {
 
 	public static Map<String, Result> getResults() {
 		return results;
+	}
+	public static Map<String, Task> getUnplannedTasks() {
+		return unplannedTasks;
 	}
 }

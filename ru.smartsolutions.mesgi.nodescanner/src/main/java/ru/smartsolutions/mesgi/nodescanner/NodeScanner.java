@@ -15,8 +15,9 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
 import ru.smartsolutions.mesgi.model.DeviceConnection;
+import ru.smartsolutions.mesgi.model.INodeScanner;
 
-public class NodeScanner implements Runnable {
+public class NodeScanner implements Runnable, INodeScanner {
 
 	private final String FUNCTION = "NodeStore_dumpTable";
 	private EventAdmin eventAdmin;
@@ -50,6 +51,10 @@ public class NodeScanner implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public List<DeviceConnection> getDeviceConnections() {
+		return deviceConnections;
 	}
 	
 	public void stop(){
@@ -138,4 +143,5 @@ public class NodeScanner implements Runnable {
 	    result.put("Availability", availability);
 	    return result;
 	  }
+
 }

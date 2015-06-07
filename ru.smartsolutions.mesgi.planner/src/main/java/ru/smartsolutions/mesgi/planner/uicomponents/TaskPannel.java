@@ -1,10 +1,7 @@
 package ru.smartsolutions.mesgi.planner.uicomponents;
 
-import java.util.Map;
-
 import ru.smartsolutions.mesgi.model.Task;
 
-import com.vaadin.server.ClientConnector.DetachEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -30,11 +27,14 @@ public class TaskPannel extends VerticalLayout {
 	private TextArea taskDescription;
 	private TextArea complTaskDescription;
 	
-	private Map<String, Button> tasks;
-	private Map<String, Button> compTasks;
+//	private Map<String, Button> tasks;
+//	private Map<String, Button> compTasks;
 	
 	private Button addTaskBut;
 	private Button removeTaskBut;
+	
+	private Button lastTask;
+	
 	private HorizontalLayout buttonHL;
 
 	public TaskPannel() {
@@ -93,21 +93,38 @@ public class TaskPannel extends VerticalLayout {
 				
 			}
 		});
+		
+		//удаление задачи
+		removeTaskBut.addClickListener(new ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if(lastTask == null)
+					UI.getCurrent().addWindow(new MessageBox("Выберите задачу для удаления."));
+				else{
+					taskPanelVL.removeComponent(lastTask);
+					lastTask = null;
+					taskDescription.setReadOnly(false);
+					taskDescription.setValue("");
+					taskDescription.setReadOnly(true);
+				}
+			}
+		});
 	}
 
 	public void addTask(Task task){
 
 //		создается кнопка
-		Button taskButton = new Button(task.getName());
+		final Button taskButton = new Button(task.getName());
 		taskButton.setWidth(100, Unit.PERCENTAGE);
 		
 //		выбор цвета в зависимости от заплаинрованности задачи
-		if(task.getPlannedInterval() == null) taskButton.setStyleName("available-device");
-		else taskButton.setStyleName("unavailable-device");
+		if(task.getPlannedInterval() == null) taskButton.setStyleName("unavailable-device");
+		else taskButton.setStyleName("available-device");
 
 //		создание и отображение информации
 		final StringBuilder sb = new StringBuilder();
-		sb.append("Наименование: " + task.getName());
+		sb.append("Наименование: " + task.getName() + "\n");
 		sb.append("Id: " + task.getId());
 		
 		taskButton.addClickListener(new ClickListener() {
@@ -117,6 +134,8 @@ public class TaskPannel extends VerticalLayout {
 				taskDescription.setReadOnly(false);
 				taskDescription.setValue(sb.toString());
 				taskDescription.setReadOnly(true);
+				
+				lastTask = taskButton;
 			}
 		});
 		

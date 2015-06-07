@@ -5,6 +5,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
+import ru.smartsolutions.mesgi.model.INodeScanner;
+
 @SuppressWarnings("rawtypes")
 public class Activator implements BundleActivator {
 
@@ -21,6 +23,8 @@ public class Activator implements BundleActivator {
 		Thread thr = new Thread(scanner);
 		thr.setDaemon(true);
 		thr.start();
+		
+		context.registerService(INodeScanner.class, scanner, null);
 		
 		System.out.println("Mesgi Node Scanner started");
 	}
