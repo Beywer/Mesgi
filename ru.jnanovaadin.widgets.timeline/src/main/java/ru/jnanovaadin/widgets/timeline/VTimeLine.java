@@ -1,13 +1,9 @@
 package ru.jnanovaadin.widgets.timeline;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.Interval;
-
-import ru.jnanovaadin.widgets.timeline.client.GetIntervalClientRcp;
 import ru.jnanovaadin.widgets.timeline.client.SetIntervalClientRcp;
 import ru.jnanovaadin.widgets.timeline.client.VTimeLineState;
 
@@ -45,11 +41,6 @@ public class VTimeLine extends com.vaadin.ui.AbstractComponent {
 		getRpcProxy(SetIntervalClientRcp.class).setCurrentInterval(startDate, endDate);
 	}
 	
-	public Interval getCurrentInterval(){
-		return getRpcProxy(GetIntervalClientRcp.class).getCurrentInterval();
-	}
-	
-		
 	public static Map<String,String> createRow(long starttime,long endtime,String content,String group){
 		Map<String,String> row = new HashMap<>();
 		row.put(NAME_COLUMN_STARTTIME, String.valueOf(starttime));

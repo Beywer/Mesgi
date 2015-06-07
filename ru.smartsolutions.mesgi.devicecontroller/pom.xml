@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.smartsolutions.mesgi</groupId>
   <artifactId>ru.smartsolutions.mesgi.devicecontroller</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>bundle</packaging>
   
   	<properties>
@@ -41,9 +41,15 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>ru.smartsolutions.mesgi</groupId>
 			<artifactId>ru.smartsolutions.mesgi.model</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
             <scope>provided</scope>
 		</dependency>
 	</dependencies>

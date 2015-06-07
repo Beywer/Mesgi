@@ -1,12 +1,13 @@
 package ru.smartsolutions.mesgi.transport;
 
 import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
-
-import com.google.gson.Gson;
 
 import ru.smartsolutions.mesgi.model.ITransporter;
 import ru.smartsolutions.mesgi.model.Task;
+
+import com.google.gson.Gson;
 
 public class Transporter implements ITransporter {
 	
@@ -16,23 +17,20 @@ public class Transporter implements ITransporter {
 		gson = new Gson();
 	}
 
-	public void sendTask(String ip, Task task) {
-		
-		CoapClient client = new CoapClient("["+ip+"]/plan");
-		
-		String payload = gson.toJson(task.getParameters());
-		
-//		client.put(payload, MediaTypeRegistry.APPLICATION_JSON);
-		
-		System.out.println(client.put(payload, MediaTypeRegistry.APPLICATION_JSON).getResponseText());
-		
-	}
+	public boolean sendTask(String ip, String path, Task task) {
 
-	public boolean checkTask(String ip, Task task) {
+//		создание клиента, упаковка в JSON, отправка
+		CoapClient client = new CoapClient("["+ip+"]/" + path);
+		String taskJSON = gson.toJson(task.getParameters());
+		CoapResponse resp = client.put(taskJSON, MediaTypeRegistry.APPLICATION_JSON);
+
+//		если ответ пришел
+		if(resp != null)  return true;
+		
 		return false;
 	}
 
-	private String getAddress(String ip){
-		return "["+ip+"]";
+	public String checkTask(String ip, Task task) {
+		return "";
 	}
 }

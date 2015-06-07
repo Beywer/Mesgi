@@ -1,6 +1,10 @@
 package ru.smartsolutions.mesgi.planner.uicomponents;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ru.smartsolutions.mesgi.model.Task;
+import ru.smartsolutions.mesgi.planner.data.DataProvider;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -27,8 +31,8 @@ public class TaskPannel extends VerticalLayout {
 	private TextArea taskDescription;
 	private TextArea complTaskDescription;
 	
-//	private Map<String, Button> tasks;
-//	private Map<String, Button> compTasks;
+	private Map<String, Button> tasks;
+	private Map<String, Button> compTasks;
 	
 	private Button addTaskBut;
 	private Button removeTaskBut;
@@ -39,6 +43,9 @@ public class TaskPannel extends VerticalLayout {
 
 	public TaskPannel() {
 		super();
+		
+		tasks = new HashMap<String, Button>();
+		
 		buildInterface();	
 		createListeners();
 	}
@@ -125,7 +132,9 @@ public class TaskPannel extends VerticalLayout {
 //		создание и отображение информации
 		final StringBuilder sb = new StringBuilder();
 		sb.append("Наименование: " + task.getName() + "\n");
-		sb.append("Id: " + task.getId());
+		sb.append("Id: " + task.getId() + "\n");
+		if(task.getDevice() == null) sb.append("Устройство: <none>");
+		else sb.append("Устройство: " + task.getDevice().getName());
 		
 		taskButton.addClickListener(new ClickListener() {
 			
@@ -141,12 +150,22 @@ public class TaskPannel extends VerticalLayout {
 		
 //		добаление на форму
 		taskPanelVL.addComponent(taskButton);
+		tasks.put(task.getId(), taskButton);
 		
 //		обновления родителя
 		HasComponents component =  getParent();
 		if(component instanceof MainComponent){
 			((MainComponent)component).updateUI();
 		}
+		
+	}
+	
+	public void updateTask(String id, boolean planned){
+
+		Button button = tasks.get(id);
+		if(button != null)
+			if(planned)	button.setStyleName("available-device");
+			else button.setStyleName("unavailable-device");
 		
 	}
 	

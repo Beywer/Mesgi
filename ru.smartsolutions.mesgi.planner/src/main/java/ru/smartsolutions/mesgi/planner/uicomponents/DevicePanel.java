@@ -37,20 +37,19 @@ public class DevicePanel extends VerticalLayout {
 		
 //		VerticalLayout, в который сложатся кнопки устройств
 		devicePanelVL = new VerticalLayout();
-//		devicePanelVL.setSizeFull();
 
 //		Описание устрйоств
 		deviceDescription = new TextArea("Описание устройств");
 		deviceDescription.setSizeFull();
 		deviceDescription.setReadOnly(true);
 		
-//		Иницаилизация кнопок устройств, если устройства уже есть
-		Map<String, Device> devices = DataProvider.getDevices();
-		
-		for(String key : devices.keySet()){
-			Device device = devices.get(key);
-			addDevice(device);
-		}
+////		Иницаилизация кнопок устройств, если устройства уже есть
+//		Map<String, Device> devices = DataProvider.getDevices();
+//		
+//		for(String key : devices.keySet()){
+//			Device device = devices.get(key);
+//			addDevice(device);
+//		}
 		
 //		панель, в которой будет лежать список
 		Panel deviceListPanel = new Panel("Устройства");

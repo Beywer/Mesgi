@@ -39,7 +39,7 @@ public class TaskCreaterWindow extends Window {
 		this.center();
 		this.setModal(true);
 		this.setResizable(false);
-		this.setClosable(false);
+//		this.setClosable(false);
 		
 		mainVL = new VerticalLayout();
 		mainVL.setMargin(true);

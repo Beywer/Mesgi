@@ -12,8 +12,10 @@ public class Activator implements BundleActivator {
 	
 	public void start(BundleContext context) throws Exception {
 		
+		Planner planner = new Planner();
+		
 		coapServer = new CoapServer();
-		PlanResource taskresource = new PlanResource("plan");
+		PlanResource taskresource = new PlanResource("plan", planner);
 
 		coapServer.add(taskresource);
 		coapServer.start();

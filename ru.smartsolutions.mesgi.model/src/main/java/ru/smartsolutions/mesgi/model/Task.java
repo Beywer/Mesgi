@@ -47,8 +47,6 @@ public class Task implements Comparable<Task>, Serializable {
 			double aEndD = (Double) params.get("aEnd");
 			long aEnd = Math.round(aEndD);
 			intervalAllowed = new Interval(aStart, aEnd);
-			System.out.println("By params [aStart] : " + aStart);
-			System.out.println("By params [aEnd] : " + aEnd);
 		}
 		
 		double pStartD = (Double) params.get("pStart");
@@ -59,8 +57,6 @@ public class Task implements Comparable<Task>, Serializable {
 			double pEndD = (Double) params.get("pEnd");
 			long pEnd = Math.round(pEndD);
 			plannedInterval = new Interval(pStart, pEnd);
-			System.out.println("By params [pStart] : " + pStart);
-			System.out.println("By params [pEnd] : " + pEnd);
 		}
 	}
 	

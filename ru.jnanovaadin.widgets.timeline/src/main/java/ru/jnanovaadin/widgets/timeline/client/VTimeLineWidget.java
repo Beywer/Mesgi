@@ -4,13 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.Interval;
-
 import com.chap.links.client.Timeline;
 import com.chap.links.client.Timeline.DateRange;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.VisualizationUtils;
 
 // Extend any GWT Widget
 public class VTimeLineWidget extends ScrollPanel {
@@ -37,15 +34,6 @@ public class VTimeLineWidget extends ScrollPanel {
 		};
 		//VisualizationUtils.loadVisualizationApi(onLoadCallback);
 		onLoadCallback.run();
-	}
-	
-	public Interval getCurrentInteval(){
-
-		long start = timeline.getVisibleChartRange().getStart().getTime();
-		long end = timeline.getVisibleChartRange().getEnd().getTime();
-		
-		return new Interval(start, end);
-		
 	}
 
 	public void setDatatable(final List<Map<String,String>> datatable){
@@ -83,7 +71,7 @@ public class VTimeLineWidget extends ScrollPanel {
 		
 	private static Timeline.Options createDefaultTimelineOptions(){
 		Timeline.Options options = Timeline.Options.create();
-        options.setWidth("100%");
+        options.setWidth("99.6%");
         options.setStyle(Timeline.Options.STYLE.BOX);
         options.setGroupsWidth(100);
         return options;

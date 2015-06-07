@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
 import ru.smartsolutions.mesgi.model.Device;
+import ru.smartsolutions.mesgi.planner.data.DataProvider;
 
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;

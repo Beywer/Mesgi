@@ -4,7 +4,7 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 import ru.smartsolutions.mesgi.model.Device;
-import ru.smartsolutions.mesgi.planner.uicomponents.DataProvider;
+import ru.smartsolutions.mesgi.planner.data.DataProvider;
 
 public class NodeReciever implements EventHandler {
 	
@@ -20,8 +20,8 @@ public class NodeReciever implements EventHandler {
 		Boolean availability = (Boolean) event.getProperty("Availability");
 		
 		//
-		if(DataProvider.checkDevice(ip)){
-			DataProvider.updateDeviceAvailability(ip, availability);
+		if(DataProvider.getDevice(ip) != null){
+			DataProvider.changeDeviceAvailability(ip, availability);
 		}
 		else {
 			Device device = new Device(ip, availability);

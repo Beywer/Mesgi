@@ -1,8 +1,6 @@
 package ru.jnanovaadin.widgets.timeline.client;
 
 
-import org.joda.time.Interval;
-
 import ru.jnanovaadin.widgets.timeline.VTimeLine;
 
 import com.google.gwt.core.client.GWT;
@@ -21,14 +19,6 @@ public class VTimeLineConnector extends AbstractComponentConnector {
 			public void setCurrentInterval(long startDate, long endDate) {
 				getWidget().setCurrentInterval(startDate, endDate);
 				
-			}
-		});
-		
-		registerRpc(GetIntervalClientRcp.class, new GetIntervalClientRcp() {
-			
-			@Override
-			public Interval getCurrentInterval() {
-				return getWidget().getCurrentInteval();
 			}
 		});
 	}

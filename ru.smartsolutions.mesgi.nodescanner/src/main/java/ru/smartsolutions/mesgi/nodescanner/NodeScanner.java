@@ -61,6 +61,10 @@ public class NodeScanner implements Runnable, INodeScanner {
 		interrupt = false;
 	}
 	
+	public Map<String, Boolean> getDumptable() {
+		return dumptable;
+	}
+
 	@SuppressWarnings("unchecked")
 	private void scanNodes(){
 
