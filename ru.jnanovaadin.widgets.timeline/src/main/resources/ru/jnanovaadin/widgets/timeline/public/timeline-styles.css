@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+/* div.timeline-event { */
+/*   border-color: rgba(0,0,250,0.3); */
+/*   background-color: rgba(0,0,200,0.3); */
+/* } */
+div.red { 
+	border-color: red;
+    background-color: red;
+}
