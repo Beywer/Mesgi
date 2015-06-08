@@ -13,14 +13,13 @@ import ru.smartsolutions.mesgi.model.Task;
 import com.google.gson.Gson;
 
 public class ClientProvider {
-	
+
 	private static Gson gson = new Gson();
+	private static Map<String, CoapClient> clients = new HashMap<String, CoapClient>();
 	
-	private static Map<String, CoapClient> planObservers = new HashMap<String, CoapClient>();
-	
-	public static void addPlanObserver(final String ip){
+	public static void addClient(final String ip){
 		
-		final CoapClient client = new CoapClient("["+ip+"]/plan");
+		CoapClient client = new CoapClient("["+ip+"]/plan");
 		
 		client.observe(new CoapHandler() {
 			
@@ -28,28 +27,27 @@ public class ClientProvider {
 			@Override
 			public void onLoad(CoapResponse response) {
 				
-				String result = response.getResponseText();
-				System.out.println("Result [" + result +"]");
-				if(!result.equals("none") && !result.equals("")){
-					HashMap<String, Object> params = gson.fromJson(result, HashMap.class);
-
-					Task plannedTask = new Task(params);
-
-					if(plannedTask.getPlannedInterval() != null){
-						Device device = DataProvider.getDevice(ip);
-						DataProvider.addTaskToDevicePlan(device, plannedTask);
-					}
+				String responseStr = response.getResponseText();
+				
+				if(responseStr != null && !responseStr.equals("") && !responseStr.equals("none")){
 					
-					client.delete();
+					HashMap<String, Object> params = gson.fromJson(response.getResponseText(),
+							HashMap.class);
+					
+					Task task = new Task(params);
+					Device device = DataProvider.getDevice(ip);
+					System.out.println("Task to plan " +task.getName() + "    " + ip);
+					DataProvider.addTaskToDevicePlan(device, task);
 				}
 			}
-
+			
 			@Override
 			public void onError() {
+				
 			}
 		});
 		
-		planObservers.put(ip, client);
-		
+		clients.put(ip, client);
 	}
+	
 }
