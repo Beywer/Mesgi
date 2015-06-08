@@ -27,7 +27,8 @@ public class DataProvider {
 	private static Map<String, Result> results = new HashMap<>();
 
 //	список вообще всех задач
-	private static Map<String, Task> tasks = new HashMap<>();
+	private static volatile Map<String, Task> tasks = new HashMap<>();
+	private static volatile List<String> sendedTasks = new ArrayList<>();
 	
 //	список компонентов
 	private static List<MainComponent> components = new ArrayList<>();
@@ -49,7 +50,8 @@ public class DataProvider {
 		updatePlans();
 
 		TaskPannel taskPannel = mainComponent.getTaskPannel();
-		for(Task task : tasks.values()){
+		for(String id : tasks.keySet()){
+			Task task = tasks.get(id);
 			taskPannel.addTask(task);
 		}
 		
@@ -60,6 +62,10 @@ public class DataProvider {
 	
 //	PLANS
 	public static void addTaskToDevicePlan(Device device, Task task){
+		
+		System.out.println("Planner\n");
+		System.out.println("\tTask " + task.getName());
+		System.out.println("\tadd to device's plan " + device.getAddress());
 
 //		если у  устройства не было списка задач, он создастся
 		List<Map<String, String>> devicePaln = devicePlans.get(device.getAddress());
@@ -81,7 +87,7 @@ public class DataProvider {
 		devicePaln.add(value);
 		
 //		заменяется старая задача на новую (plannedInter не null)
-//		если этоне фиктивная задача
+//		если это не фиктивная задача
 		if(task.getPlannedInterval().getEndMillis() > 45*60*1000)
 			tasks.put(task.getId(), task);
 		
@@ -94,7 +100,6 @@ public class DataProvider {
 	
 //	DEVICES
 	public static void addDevice(Device device){
-
 //		сохранение в списке устройств
 		devices.put(device.getAddress(), device);
 		
@@ -113,8 +118,7 @@ public class DataProvider {
 			component.getDevicePannel().addDevice(device);
 		}
 		
-//		создаение слушателя плана
-		ClientProvider.addPlanObserver(device.getAddress());
+		ClientProvider.addClient(device.getAddress());
 	}
 	
 	public static void changeDeviceAvailability(String ip, boolean availability){
@@ -159,14 +163,15 @@ public class DataProvider {
 		
 		List<Task> unsendedTasks = new ArrayList<Task>();
 		
-		for(Task task : tasks.values()){
-			if(task.getDevice() == null) unsendedTasks.add(task);
+		for(String id : tasks.keySet()){
+			if(!sendedTasks.contains(id)) unsendedTasks.add(tasks.get(id));
 		}
 		
 		return unsendedTasks;
 	}
 	
 	public static void setTaskSended(Task task, Device device){
+		sendedTasks.add(task.getId());
 		tasks.get(task.getId()).setDevice(device);
 	}
 	
@@ -194,27 +199,6 @@ public class DataProvider {
 		}
 	}	
 
-//	private static void updateTasks(){
-//		
-//		for(MainComponent mainComponent : components){
-//			TaskPannel taskPannel = mainComponent.getTaskPannel();
-//			
-//			for(Task task : tasks.values())
-//				taskPannel.updateTask(task.getId(), (task.getPlannedInterval()!=null));
-//		}
-//		
-//	}
-//	
-//	private static void updateDevices(){
-//		
-//		for(MainComponent mainComponent : components){
-//			DevicePanel devicePanel = mainComponent.getDevicePannel();
-//			
-//			for(Device device : devices.values())
-//				devicePanel.updateDevice(device.getAddress(), device.isAvailability());
-//		}
-//	}
-	
 //	GETTERS
 	public static Map<String, Device> getDevices(){
 		return devices;

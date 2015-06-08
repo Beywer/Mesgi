@@ -1,9 +1,6 @@
 package ru.smartsolutions.mesgi.devicecontroller.coap.resource;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
@@ -19,8 +16,9 @@ public class PlanResource extends CoapResource {
 
 	private Gson gson;
 	private Planner planner;
-	private Queue<Task> plannedTasks;
-	private ReentrantLock plannedTasksLock;
+	
+//	private Queue<Task> plannedTasks;
+	private Task lastTask;
 	
 	public PlanResource(String name, Planner planner) {
 		super(name);
@@ -28,9 +26,6 @@ public class PlanResource extends CoapResource {
 		getAttributes().setObservable();
 		setObservable(true);
 		setObserveType(Type.CON);
-		
-		plannedTasks = new LinkedList<Task>();
-		plannedTasksLock = new ReentrantLock();
 		
 		this.planner = planner;
 		gson = new Gson();
@@ -50,35 +45,70 @@ public class PlanResource extends CoapResource {
 		
 		Task result = planner.planTask(task);
 		
-		plannedTasksLock.lock();
-		plannedTasks.add(result);
-		changed();
-		plannedTasksLock.unlock();
+		if(result.getPlannedInterval() != null){
+			exchange.respond("planned");
+		}else {
+			exchange.respond("unplanned");
+			System.out.println("Task was not planned" + result.getName());
+		}
 		
 		exchange.respond(ResponseCode.CONTENT);
 	}
 
 	@Override
 	public void handleGET(CoapExchange exchange) {
-		plannedTasksLock.lock();
-		Task task = plannedTasks.peek();
-		plannedTasksLock.unlock();
-		if(task != null){
-			String params = gson.toJson(task.getParameters());
-			exchange.respond(params);
-		} exchange.respond("none");
+		
+		System.out.println(lastTask);
+		
+		if(lastTask != null){
+			String paramsJSON = gson.toJson(lastTask.getParameters());
+			exchange.respond(paramsJSON);
+			lastTask = null;
+		}else exchange.respond("none");
 		
 		exchange.respond(ResponseCode.CONTENT);
 	}
 	
 	@Override
-	public void handleDELETE(CoapExchange exchange) {
+	public void handlePOST(CoapExchange exchange) {
 		
-		plannedTasksLock.lock();
-		plannedTasks.poll();
-		changed();
-		plannedTasksLock.unlock();
+		String mess = exchange.getRequestText();
+		String req = mess.substring(0, 5);
 		
+		switch(req){
+			case "allal" :
+				break;
+			case "check":
+				
+				Task task = null;
+				
+				String paramsJSON = mess.substring(5);
+				HashMap<String, Object> params = gson.fromJson(paramsJSON, HashMap.class);
+				
+				task = new Task(params);
+				
+				Task result = planner.planTask(task);
+				
+				if(result.getPlannedInterval() != null){
+					exchange.respond("planned");
+					System.out.println("Check task good " + task.getName());
+					lastTask = task;
+					changed();
+				}else {
+					exchange.respond("unplanned");
+					planner.removeUnplannedTask(task.getId());
+				}
+				break;
+			default :
+				Task plannedTask = planner.getPlan().get(mess);
+				System.out.println("Controller  return planned task "+ plannedTask.getName());
+				
+				String answer = gson.toJson(plannedTask.getParameters());
+				
+				exchange.respond(answer);
+				break;
+		}
+
 		exchange.respond(ResponseCode.CONTENT);
 	}
 }

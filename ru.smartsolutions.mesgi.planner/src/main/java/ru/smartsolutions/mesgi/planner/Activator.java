@@ -26,9 +26,6 @@ public class Activator implements BundleActivator {
 	
 	private INodeScanner nodeScanner;
 	private ITransporter transporter;
-	
-	public static final String PROPERTY_FILE = "mesgi.properties";
-	public static final String KARAF_FOLDER_PROPERTY = "user.dir";
 
 	private Timer timer;
 	
@@ -84,7 +81,7 @@ public class Activator implements BundleActivator {
 //		создание и запуск распределителя задач
 		TaskSender sender = new TaskSender(nodeScanner, transporter);
 		timer = new Timer();
-		timer.schedule(sender, 5000, 5000);
+		timer.schedule(sender, 2000, 200);
 		
 		System.out.println("Planner started");
 	}

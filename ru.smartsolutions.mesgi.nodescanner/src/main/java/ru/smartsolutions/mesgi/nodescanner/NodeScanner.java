@@ -1,5 +1,9 @@
 package ru.smartsolutions.mesgi.nodescanner;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -9,11 +13,13 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
+import ru.smartsolutions.mesgi.model.Constants;
 import ru.smartsolutions.mesgi.model.DeviceConnection;
 import ru.smartsolutions.mesgi.model.INodeScanner;
 
@@ -29,12 +35,28 @@ public class NodeScanner implements Runnable, INodeScanner {
 
 	private boolean interrupt;
 	
+	private String ownIp;
+	
 	public NodeScanner(EventAdmin eventAdmin){
 		this.eventAdmin = eventAdmin;
 		interrupt = true;
 		deviceConnectionsLock = new ReentrantLock();
-		deviceConnections = new ArrayList<DeviceConnection>();
+		deviceConnections = Collections.synchronizedList(new ArrayList<DeviceConnection>());
 		dumptable = new HashMap<String, Boolean>();
+		
+////		получение собсветнного адреса из файла конфигурации
+//		String karafFolder = System.getProperty(Constants.KARAF_FOLDER_PROPERTY);
+//		Properties properties = new Properties();
+//		
+//		try {
+//			File file = new File(karafFolder+"/"+Constants.PROPERTY_FILE);
+//			FileInputStream inputStream = new FileInputStream(file);
+//			
+//			properties.load(inputStream);
+//			ownIp = (String) properties.get("ip");
+//			
+//		} catch (FileNotFoundException e1) {e1.printStackTrace();}
+//		catch (IOException e) {e.printStackTrace();}
 	}
 	
 	public void run() {
@@ -106,38 +128,42 @@ public class NodeScanner implements Runnable, INodeScanner {
 			String ip = (String) node.get("ip");
 			long newLink = (Long) node.get("link");
 			
-//			в зависимости от метрики устройство 
-//			либо доступно, либо нет
-			boolean availability = false;
-			if(newLink != 0)
-				availability = true;
+//			если не получена информация о себе
+			if(!ip.equals(ownIp)){
 			
-//			получение старой доступности
-			Boolean oldAvailability = null;
-			oldAvailability = dumptable.get(ip);
-			
-//			если старая и новая доступности совпадают,
-//			то eventAdmin не кидает событие
-			if(oldAvailability != null){
-				if(oldAvailability.booleanValue()^availability){
-					eventAdmin.postEvent(
-							new Event("ru/smartsolutions/mesgi/nodescanner", getEventProperties(ip,availability)));
+//				в зависимости от метрики устройство 
+//				либо доступно, либо нет
+				boolean availability = false;
+				if(newLink != 0)
+					availability = true;
+				
+//				получение старой доступности
+				Boolean oldAvailability = null;
+				oldAvailability = dumptable.get(ip);
+				
+//				если старая и новая доступности совпадают,
+//				то eventAdmin не кидает событие
+				if(oldAvailability != null){
+					if(oldAvailability.booleanValue()^availability){
+						eventAdmin.postEvent(
+								new Event("ru/smartsolutions/mesgi/nodescanner", getEventProperties(ip,availability)));
+						System.out.println(ip + "  " + availability);
+					}
+//				если ранне небыло узла, кидается событие
+				} else{ eventAdmin.postEvent(
+						new Event("ru/smartsolutions/mesgi/nodescanner", getEventProperties(ip,availability)));
 					System.out.println(ip + "  " + availability);
 				}
-//			если ранне небыло узла, кидается событие
-			} else{ eventAdmin.postEvent(
-					new Event("ru/smartsolutions/mesgi/nodescanner", getEventProperties(ip,availability)));
-				System.out.println(ip + "  " + availability);
+	
+//				запоминается новая доступность
+				dumptable.put(ip, availability);
+				
+//				создается объект, хранящий информацию о метрике 
+//				и сохраниние его в списке
+				DeviceConnection connection = new DeviceConnection(ip);
+				connection.setConnection(newLink);
+				deviceConnections.add(connection);
 			}
-
-//			запоминается новая доступность
-			dumptable.put(ip, availability);
-			
-//			создается объект, хранящий информацию о метрике 
-//			и сохраниние его в списке
-			DeviceConnection connection = new DeviceConnection(ip);
-			connection.setConnection(newLink);
-			deviceConnections.add(connection);
 		}	
 	}
 	
