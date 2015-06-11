@@ -4,13 +4,16 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 import ru.smartsolutions.mesgi.model.Device;
+import ru.smartsolutions.mesgi.model.ITransporter;
 import ru.smartsolutions.mesgi.planner.data.DataProvider;
 
 public class NodeReciever implements EventHandler {
 	
 	private int count;
+	private ITransporter transporter;
 	
-	public NodeReciever() {
+	public NodeReciever(ITransporter transporter) {
+		this.transporter = transporter;
 		count = 0;
 	}
 
@@ -25,9 +28,11 @@ public class NodeReciever implements EventHandler {
 		}
 		else {
 			Device device = new Device(ip, availability);
-			//TODO получить настоящее описание и имя устройства
-			device.setName("Device " + count);
-			device.setDescription("Descr " + count);
+			String name = transporter.getName(ip);
+			if(name != null)
+				device.setName(name);
+			else device.setName("Устройство " + count);
+//			device.setDescription("Descr " + count);
 			count ++;
 			
 			DataProvider.addDevice(device);

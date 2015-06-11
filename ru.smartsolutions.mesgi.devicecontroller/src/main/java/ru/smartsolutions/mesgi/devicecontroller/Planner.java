@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.joda.time.Interval;
 
@@ -16,11 +19,15 @@ public class Planner {
 	
 	private long lastTaskEnd;
 	
+	private Task firstTask;
+	private Timer timer;
+	
 	public Planner() {
 		
 		plan = new HashMap<String, Task>();
 		unplannedTasks = Collections.synchronizedMap(new HashMap<String, Task>());
 		lastTaskEnd= 0;
+		firstTask = null;
 	}
 	
 	public void removeAllTasks(){
@@ -28,9 +35,7 @@ public class Planner {
 	}
 	
 	public void removeUnplannedTask(String id){
-		System.out.println("Old count to send " + unplannedTasks.size());
 		unplannedTasks.remove(id);
-		System.out.println("New count to send " + unplannedTasks.size());
 	}
 	
 	public void removeTask(Task task){
@@ -47,13 +52,12 @@ public class Planner {
 	}
 	
 	public void removeUnsendedTask(String id){
-		System.out.println(unplannedTasks.size()+"  task was unplanned");
-		System.out.println("remove task " +id);
-		for(Task task : unplannedTasks.values()){
-			System.out.print(task.getId() + " ||| ");
-		}
+//		System.out.println("remove task " +id);
+//		for(Task task : unplannedTasks.values()){
+//			System.out.print(task.getId() + " ||| ");
+//		}
 		unplannedTasks.remove(id);
-		System.out.println("\n"+unplannedTasks.size()+"  now in unplanned tasks");
+//		System.out.println("\n"+unplannedTasks.size()+"  now in unplanned tasks");
 	}
 
 	public Task planTask(Task task){
@@ -103,6 +107,29 @@ public class Planner {
 //		поочередное планирование всех незапланированных задач
 		for(Task task : tasks){
 			planTask(task);
+		}
+		
+	}
+	
+	public void stop(){
+		timer.cancel();
+	}
+	
+	private class TaskPerformer extends TimerTask{
+
+		private Random r;
+		private StringBuilder sb;
+		
+		public TaskPerformer() {
+			r = new Random();
+			sb = new StringBuilder();
+		}
+		
+		@Override
+		public void run() {
+			int i1 = r.nextInt(999999), i2 = r.nextInt(999999);
+			sb.append(String.valueOf(i1) +
+					" + "+ String.valueOf(i2) + " = "+ String.valueOf(i1=i2) + "\n");
 		}
 		
 	}

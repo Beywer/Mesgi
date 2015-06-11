@@ -36,7 +36,6 @@ public class ClientProvider {
 					
 					Task task = new Task(params);
 					Device device = DataProvider.getDevice(ip);
-					System.out.println("Task to plan " +task.getName() + "    " + ip);
 					DataProvider.addTaskToDevicePlan(device, task);
 				}
 			}

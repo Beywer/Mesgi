@@ -1,6 +1,7 @@
 package ru.smartsolutions.mesgi.transport;
 
 import java.util.HashMap;
+import java.util.Properties;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
@@ -46,16 +47,58 @@ public class Transporter implements ITransporter {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	public Task getPlannedTask(String ip, String path, Task task) {
 		
 		CoapClient client = new CoapClient("["+ip+"]/" + path);
-		CoapResponse response = client.post(task.getId(), MediaTypeRegistry.TEXT_PLAIN);
+		CoapResponse response = null;
+		
+		while(response == null)
+			response = client.post(task.getId(), MediaTypeRegistry.TEXT_PLAIN);
 		
 		String paramsStr = response.getResponseText();
 		
 		HashMap<String, Object> params = gson.fromJson(paramsStr, HashMap.class);
 		
-		return new Task(params);
+		Task task2 = new Task(params);
+		
+		
+		System.out.println(task2.getPlannedInterval().getStartMillis());
+		
+		return task2;
 			
+	}
+
+	public String getNodeType(String ip){
+		
+		Properties properties = getProperties(ip);
+		if(properties != null)
+			return properties.getProperty("type");
+		return null;
+	}
+
+	public String getName(String ip) {	
+		
+		System.out.println("Get Name");
+		Properties properties = getProperties(ip);
+		System.out.println(properties);
+		if(properties != null)
+			return properties.getProperty("name");
+		return null;
+	}
+	
+	private Properties getProperties(String ip){
+		CoapClient client = new CoapClient("["+ip+"]/info");
+		
+		CoapResponse response = client.get();
+		
+		if(response != null && response.getResponseText()!=null &&
+				!response.getResponseText().equals("")){
+			if(response.getResponseText()!=null){
+				Properties params = gson.fromJson(response.getResponseText(), Properties.class);
+				return params;
+			}
+		}
+		return null;
 	}
 }

@@ -44,12 +44,6 @@ public class Activator implements BundleActivator {
 		httpService.registerServlet("/*", servlet,
 				null,null);
 
-//		запуск слушателя сообщений о состоянии устройтсв 
-		NodeReciever nodeReciever = new NodeReciever();
-		context.registerService(EventHandler.class, 
-				nodeReciever, 
-				getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
-		
 //		получение транспортного сервиса
 		ServiceReference transporterReference =
 				context.getServiceReference(ITransporter.class);
@@ -59,6 +53,12 @@ public class Activator implements BundleActivator {
 		ServiceReference nodeScannerReference =
 				context.getServiceReference(INodeScanner.class);
 		nodeScanner = (INodeScanner) context.getService(nodeScannerReference);
+		
+//		запуск слушателя сообщений о состоянии устройтсв 
+		NodeReciever nodeReciever = new NodeReciever(transporter);
+		context.registerService(EventHandler.class, 
+				nodeReciever, 
+				getHandlerServiceProperties("ru/smartsolutions/mesgi/nodescanner"));
 		
 		System.out.println("Planner got services:");
 		System.out.println("\t\t" + nodeScanner);

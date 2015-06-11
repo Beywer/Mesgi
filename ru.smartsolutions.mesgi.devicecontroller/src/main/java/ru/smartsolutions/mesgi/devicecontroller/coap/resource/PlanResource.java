@@ -31,6 +31,16 @@ public class PlanResource extends CoapResource {
 		gson = new Gson();
 	}
 	
+	@Override
+	public void handleDELETE(CoapExchange exchange) {
+		
+		planner.removeAllTasks();
+		System.out.println("Plan clean");
+		
+		exchange.respond(ResponseCode.CONTENT);
+		
+	}
+	
 //	Получение задачи
 	@SuppressWarnings("unchecked")
 	@Override

@@ -42,6 +42,7 @@ public class TaskSender extends TimerTask {
 		
 //		если задачи есть
 		if(unsendedTasks.size() != 0){
+			System.out.print("Есть задачи");
 		
 //			выбирается первое самое близкое устройство, которое достижимо
 			DeviceConnection connection = null;
@@ -53,6 +54,7 @@ public class TaskSender extends TimerTask {
 			
 //			Если есть устройства
 			if(connection != null){
+				System.out.print("Finedd Connection " + connection.getIp());
 				
 //				получение устройства, на которое отправятся задачи
 				String ip = connection.getIp();
@@ -61,15 +63,17 @@ public class TaskSender extends TimerTask {
 //				Отправка
 				for(Task task : unsendedTasks){
 
-					System.out.println("Planner: task " +task.getId()+" sended to   " + ip);
 					String answer = transporter.sendTask(ip, "plan", task);
+					if(answer != null)
 					switch(answer){
 						case "planned":
+							System.out.println("Planner: task " +task.getId()+" sended to   " + ip);
 							DataProvider.addTaskToDevicePlan(device, 
 									transporter.getPlannedTask(ip, "plan", task));
 							DataProvider.setTaskSended(task, device);
 							break;
 						case "unplanned" :
+							System.out.println("Planner: task " +task.getId()+" sended to   " + ip);
 							DataProvider.setTaskSended(task, device);
 							break;
 					}

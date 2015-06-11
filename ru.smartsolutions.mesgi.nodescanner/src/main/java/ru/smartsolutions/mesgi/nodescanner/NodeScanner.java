@@ -14,7 +14,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
@@ -22,6 +23,7 @@ import org.osgi.service.event.EventAdmin;
 import ru.smartsolutions.mesgi.model.Constants;
 import ru.smartsolutions.mesgi.model.DeviceConnection;
 import ru.smartsolutions.mesgi.model.INodeScanner;
+import ru.smartsolutions.mesgi.model.ITransporter;
 
 public class NodeScanner implements Runnable, INodeScanner {
 
@@ -30,33 +32,54 @@ public class NodeScanner implements Runnable, INodeScanner {
 	
 	private Map<String, Boolean> dumptable;
 	
-	private List<DeviceConnection> deviceConnections;
-	private ReentrantLock deviceConnectionsLock;
+	private volatile List<DeviceConnection> deviceConnections;
+//	private ReentrantLock deviceConnectionsLock;
+	
+	private List<String> blackList;
 
 	private boolean interrupt;
 	
+	private ITransporter transporter;
+	private Timer timer;
 	private String ownIp;
 	
-	public NodeScanner(EventAdmin eventAdmin){
+	public NodeScanner(EventAdmin eventAdmin, ITransporter transporter){
 		this.eventAdmin = eventAdmin;
+		this.transporter = transporter;
+		
 		interrupt = true;
-		deviceConnectionsLock = new ReentrantLock();
+//		deviceConnectionsLock = new ReentrantLock();
 		deviceConnections = Collections.synchronizedList(new ArrayList<DeviceConnection>());
 		dumptable = new HashMap<String, Boolean>();
 		
-////		получение собсветнного адреса из файла конфигурации
-//		String karafFolder = System.getProperty(Constants.KARAF_FOLDER_PROPERTY);
-//		Properties properties = new Properties();
-//		
-//		try {
-//			File file = new File(karafFolder+"/"+Constants.PROPERTY_FILE);
-//			FileInputStream inputStream = new FileInputStream(file);
-//			
-//			properties.load(inputStream);
-//			ownIp = (String) properties.get("ip");
-//			
-//		} catch (FileNotFoundException e1) {e1.printStackTrace();}
-//		catch (IOException e) {e.printStackTrace();}
+		blackList = new ArrayList<String>();
+		
+//		получение собсветнного адреса из файла конфигурации
+		String karafFolder = System.getProperty(Constants.KARAF_FOLDER_PROPERTY);
+		Properties properties = new Properties();
+		
+		try {
+			File file = new File(karafFolder+"/"+Constants.PROPERTY_FILE);
+			FileInputStream inputStream = new FileInputStream(file);
+			
+			properties.load(inputStream);
+			ownIp = (String) properties.get("ip");
+			blackList.add(ownIp);
+			
+		} catch (FileNotFoundException e1) {e1.printStackTrace();}
+		catch (IOException e) {e.printStackTrace();}
+		
+		
+//		periodicaly remove nodes from blacklist
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				blackList.clear();
+				blackList.add(ownIp);
+			}
+		}, 5000, 2000);
 	}
 	
 	public void run() {
@@ -66,9 +89,9 @@ public class NodeScanner implements Runnable, INodeScanner {
 //			после сканирования метрики сортируются 
 //			и к ним открывается доступ
 			Collections.sort(deviceConnections);
-			deviceConnectionsLock.unlock();
+//			deviceConnectionsLock.unlock();
 			try {
-				Thread.sleep(500);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -80,6 +103,7 @@ public class NodeScanner implements Runnable, INodeScanner {
 	}
 	
 	public void stop(){
+		timer.cancel();
 		interrupt = false;
 	}
 	
@@ -92,10 +116,10 @@ public class NodeScanner implements Runnable, INodeScanner {
 
 //		никто не должен получать метрики устройств
 //		пока список обновляется
-		deviceConnectionsLock.lock();
+//		deviceConnectionsLock.lock();
 		
 //		очищение списка устройств
-		deviceConnections.clear();
+//		deviceConnections.clear();
 		
 //		адрес AdminAPI
 		InetAddress address = null;
@@ -127,10 +151,25 @@ public class NodeScanner implements Runnable, INodeScanner {
 //			получение ip и метрики из ответа
 			String ip = (String) node.get("ip");
 			long newLink = (Long) node.get("link");
+
+			String type = null;
+//			если узел обнаружен первый раз(нигде не сохранен) прверка его типа
+			if(!blackList.contains(ip) && !dumptable.containsKey(ip)){
+				type = transporter.getNodeType(ip);
+				if(type != null)
+					switch(type){
+						case "station" :
+							blackList.add(ip);
+							break;
+						case "mobile" :
+							break;
+					}
+				else blackList.add(ip);
+			}
 			
-//			если не получена информация о себе
-			if(!ip.equals(ownIp)){
-			
+//			игнороирует себя и не мобильные узлы
+			if(!blackList.contains(ip)){
+				
 //				в зависимости от метрики устройство 
 //				либо доступно, либо нет
 				boolean availability = false;
@@ -162,9 +201,24 @@ public class NodeScanner implements Runnable, INodeScanner {
 //				и сохраниние его в списке
 				DeviceConnection connection = new DeviceConnection(ip);
 				connection.setConnection(newLink);
-				deviceConnections.add(connection);
-			}
-		}	
+				DeviceConnection connection2 = null;
+				
+				for(DeviceConnection deviceConnection : deviceConnections){
+					if(deviceConnection.getIp().equals(ip)){
+						connection2 = deviceConnection;
+						break;
+					}
+				}
+
+				if(connection2 == null) deviceConnections.add(connection);
+				else {
+					deviceConnections.remove(connection2);
+					deviceConnections.add(connection);
+				}
+				
+			} 
+			
+		}
 	}
 	
 	private Dictionary<String, Object> getEventProperties(String ip, boolean availability) {

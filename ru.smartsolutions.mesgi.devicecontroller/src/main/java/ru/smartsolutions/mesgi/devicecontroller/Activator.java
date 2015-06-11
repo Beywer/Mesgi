@@ -7,6 +7,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import ru.smartsolutions.mesgi.devicecontroller.coap.resource.InfoResource;
 import ru.smartsolutions.mesgi.devicecontroller.coap.resource.PlanResource;
 import ru.smartsolutions.mesgi.model.INodeScanner;
 import ru.smartsolutions.mesgi.model.ITransporter;
@@ -36,16 +37,18 @@ public class Activator implements BundleActivator {
 		TaskSender taskSender = new TaskSender(planner, nodeScanner, transporter);
 		
 		timer = new Timer();
-		timer.schedule(taskSender, 5000, 3000);
+		timer.schedule(taskSender, 5000, 500);
 		
 		
 		coapServer = new CoapServer();
 		PlanResource taskresource = new PlanResource("plan", planner);
+		InfoResource infoResource = new InfoResource("info");
 
 		coapServer.add(taskresource);
+		coapServer.add(infoResource);
 		coapServer.start();
 		
-		System.out.println("Device controller sdsd started");
+		System.out.println("Device controller started");
 	}
 
 	public void stop(BundleContext context) throws Exception {

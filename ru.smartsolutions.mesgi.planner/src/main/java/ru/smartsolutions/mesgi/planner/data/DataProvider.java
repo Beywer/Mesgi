@@ -63,10 +63,6 @@ public class DataProvider {
 //	PLANS
 	public static void addTaskToDevicePlan(Device device, Task task){
 		
-		System.out.println("Planner\n");
-		System.out.println("\tTask " + task.getName());
-		System.out.println("\tadd to device's plan " + device.getAddress());
-
 //		если у  устройства не было списка задач, он создастся
 		List<Map<String, String>> devicePaln = devicePlans.get(device.getAddress());
 		if(devicePaln == null){
@@ -132,9 +128,13 @@ public class DataProvider {
 			fictiveTask.setDuration(1);
 			Interval plannedInterval = new Interval(15*60*1000,	15*60*1000);
 			fictiveTask.setPlannedInterval(plannedInterval);
-			System.out.println("Add fictive task for " + device.getName());
 			addTaskToDevicePlan(device, fictiveTask);
 		} else {
+			
+			List<Map<String, String>> devicePlan = devicePlans.get(ip);
+			for(Map<String, String> task : devicePlan){
+				DataProvider.resetTask(task.get("id"));;
+			}
 			devicePlans.remove(device.getAddress());
 			updatePlans();
 		}
@@ -173,6 +173,17 @@ public class DataProvider {
 	public static void setTaskSended(Task task, Device device){
 		sendedTasks.add(task.getId());
 		tasks.get(task.getId()).setDevice(device);
+	}
+	
+	public static void resetTask(String id){
+		Task task = tasks.get(id);
+		task.setDevice(null);
+		task.setPlannedInterval(null);
+		
+		for(MainComponent mainComponent : components){
+			TaskPannel pannel = mainComponent.getTaskPannel();
+			pannel.updateTask(id, false);
+		}
 	}
 	
 //	UPDATERS

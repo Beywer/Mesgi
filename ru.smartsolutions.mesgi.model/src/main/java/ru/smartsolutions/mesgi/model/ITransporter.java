@@ -8,4 +8,7 @@ public interface ITransporter {
 	
 	public String checkTask(String ip, Task task);
 	
+	public String getNodeType(String ip);
+	
+	public String getName(String ip);
 }
